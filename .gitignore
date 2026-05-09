@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+.claude
+repomix-output.xml
+image.png
+celestial_voyager
+travel_roulette_*

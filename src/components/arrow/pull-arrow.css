@@ -1,0 +1,217 @@
+/* ── idle float ─────────────────────────────────────────── */
+@keyframes arrow-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* ── core glow pulse on the arrow body ─────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 1; }
+}
+
+/* ── trail shimmer moving upward along the shaft ───────── */
+@keyframes trail-shimmer {
+  0%   { transform: translateY(24px); opacity: 0; }
+  40%  { opacity: 0.7; }
+  100% { transform: translateY(-56px); opacity: 0; }
+}
+
+/* ── ring pulse radiating outward from the tip ─────────── */
+@keyframes ring-expand {
+  0%   { transform: scale(0.3); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── launch: arrow flies upward ────────────────────────── */
+@keyframes arrow-launch {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  30%  { transform: translateY(-40vh) scale(0.85); opacity: 1; }
+  70%  { transform: translateY(-80vh) scale(0.5); opacity: 0.6; }
+  100% { transform: translateY(-110vh) scale(0.2); opacity: 0; }
+}
+
+/* ── launch trail stretching behind the arrow ──────────── */
+@keyframes launch-trail {
+  0%   { height: 0; opacity: 0; }
+  15%  { height: 80px; opacity: 0.9; }
+  50%  { height: 200px; opacity: 0.7; }
+  100% { height: 60px; opacity: 0; }
+}
+
+/* ── container ─────────────────────────────────────────── */
+.pull-arrow {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: arrow-float 3.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+  filter: drop-shadow(0 0 12px rgba(0, 219, 233, 0.35));
+}
+
+/* ── SVG sizing ────────────────────────────────────────── */
+.pull-arrow__svg {
+  width: 44px;
+  height: 96px;
+  overflow: visible;
+}
+
+/* ── outer glow layer (pulsing) ────────────────────────── */
+.pull-arrow__glow {
+  position: absolute;
+  inset: -18px -22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(0, 219, 233, 0.18) 0%,
+    transparent 70%
+  );
+  animation: glow-pulse 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── light trail particles climbing the shaft ──────────── */
+.pull-arrow__trail {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: linear-gradient(
+    to top,
+    transparent,
+    rgba(0, 219, 233, 0.7),
+    transparent
+  );
+  animation: trail-shimmer 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.pull-arrow__trail:nth-child(3) {
+  animation-delay: 0.7s;
+  margin-left: -5px;
+  opacity: 0.6;
+}
+
+.pull-arrow__trail:nth-child(4) {
+  animation-delay: 1.4s;
+  margin-left: 3px;
+  opacity: 0.5;
+}
+
+/* ── ring expanding from the tip ───────────────────────── */
+.pull-arrow__ring {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 219, 233, 0.4);
+  animation: ring-expand 3s ease-out infinite;
+  pointer-events: none;
+}
+
+.pull-arrow__ring:nth-child(6) {
+  animation-delay: 1.5s;
+}
+
+/* ── pulling state: freeze idle animations ─────────────── */
+.pull-arrow--pulling {
+  animation: none;
+  cursor: grabbing;
+  transition: filter 0.08s linear;
+}
+
+.pull-arrow--pulling .pull-arrow__glow {
+  animation: none;
+  transition: opacity 0.08s linear, transform 0.08s linear;
+}
+
+.pull-arrow--pulling .pull-arrow__trail {
+  animation: none;
+  opacity: 0;
+}
+
+.pull-arrow--pulling .pull-arrow__ring {
+  animation: none;
+  opacity: 0;
+}
+
+/* ── launching state: fly upward with trail ────────────── */
+.pull-arrow--launching {
+  animation: arrow-launch 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+.pull-arrow--launching .pull-arrow__glow {
+  animation: none;
+  opacity: 0;
+}
+
+.pull-arrow--launching .pull-arrow__trail {
+  animation: none;
+  opacity: 0;
+}
+
+.pull-arrow--launching .pull-arrow__ring {
+  animation: none;
+  opacity: 0;
+}
+
+/* ── launch trail element ──────────────────────────────── */
+.pull-arrow__launch-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  height: 0;
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 219, 233, 0.9) 20%,
+    rgba(0, 219, 233, 0.4) 60%,
+    transparent 100%
+  );
+  animation: launch-trail 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+.pull-arrow__launch-trail--wide {
+  width: 10px;
+  margin-left: -5px;
+  opacity: 0.3;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 219, 233, 0.5) 20%,
+    rgba(0, 219, 233, 0.15) 60%,
+    transparent 100%
+  );
+  filter: blur(4px);
+}
+
+/* ── reduced-motion ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pull-arrow,
+  .pull-arrow__glow,
+  .pull-arrow__trail,
+  .pull-arrow__ring {
+    animation: none;
+  }
+
+  .pull-arrow--launching {
+    animation: none;
+    opacity: 0;
+  }
+
+  .pull-arrow__launch-trail {
+    animation: none;
+  }
+}

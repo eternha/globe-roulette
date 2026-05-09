@@ -1,0 +1,173 @@
+import { useCallback } from "react";
+import { GlobeScene } from "./components/globe/GlobeScene";
+import { PullArrow } from "./components/arrow/PullArrow";
+import { ResultCard } from "./components/result/ResultCard";
+import { useRouletteMachine } from "./hooks/useRouletteMachine";
+import { usePullGesture } from "./hooks/usePullGesture";
+
+export default function App() {
+  const { state, send } = useRouletteMachine();
+
+  /* ── Gesture → machine event wiring ────────────────────── */
+
+  const isInteractive = state.phase === "idle" || state.phase === "pulling";
+
+  const gestureBind = usePullGesture({
+    onStart: () => send({ type: "START_PULL" }),
+    onMove: (pullStrength, offsetY) =>
+      send({ type: "UPDATE_PULL", pullStrength, offsetY }),
+    onRelease: () => send({ type: "RELEASE" }),
+    disabled: !isInteractive,
+  });
+
+  const handleTryAgain = useCallback(() => {
+    send({ type: "RESET" });
+  }, [send]);
+
+  /* ── Derived view state ────────────────────────────────── */
+
+  const showResult = state.phase === "result";
+
+  const hint = getHint(state.phase);
+
+  return (
+    <>
+      <GlobeScene />
+
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 10,
+          pointerEvents: "none",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "var(--space-margin-edge)",
+        }}
+      >
+        <header
+          style={{
+            width: "100%",
+            textAlign: "center",
+            paddingTop: "env(safe-area-inset-top, 16px)",
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: "'Hanken Grotesk', sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "var(--color-on-surface)",
+              opacity: 0.7,
+            }}
+          >
+            Travel Roulette
+          </h1>
+        </header>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+            /* Keep arrow in the comfortable thumb zone on all phones */
+            paddingBottom: "max(36px, env(safe-area-inset-bottom, 16px) + 20px)",
+          }}
+        >
+          {/* Arrow + hint (hidden during result) */}
+          {!showResult && (
+            <>
+              <div
+                ref={gestureBind.ref}
+                onPointerDown={gestureBind.onPointerDown}
+                style={{
+                  pointerEvents: isInteractive ? "auto" : "none",
+                  /* Generous touch target — extends well beyond the arrow
+                     so users can initiate the pull from anywhere in the
+                     lower-center zone. 80×120 minimum hit area. */
+                  padding: "16px 28px 12px",
+                  margin: "-16px -28px -12px",
+                  ...gestureBind.style,
+                }}
+              >
+                <PullArrow
+                  pullStrength={state.pullStrength}
+                  offsetY={state.offsetY}
+                  isPulling={state.phase === "pulling"}
+                  phase={state.phase}
+                />
+              </div>
+
+              <p
+                style={{
+                  fontFamily: "'Hanken Grotesk', sans-serif",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  color: hint.color,
+                  opacity: hint.opacity,
+                  transition: "color 0.2s, opacity 0.4s",
+                  minHeight: "1em",
+                }}
+              >
+                {hint.text}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Glassmorphic bottom sheet */}
+      {showResult && state.selectedDestination && (
+        <ResultCard
+          destination={state.selectedDestination}
+          onTryAgain={handleTryAgain}
+        />
+      )}
+    </>
+  );
+}
+
+/* ── Helpers ─────────────────────────────────────────────── */
+
+interface HintConfig {
+  readonly text: string;
+  readonly color: string;
+  readonly opacity: number;
+}
+
+function getHint(phase: string): HintConfig {
+  switch (phase) {
+    case "pulling":
+      return {
+        text: "Release to launch",
+        color: "var(--color-surface-tint)",
+        opacity: 0.8,
+      };
+    case "launching":
+      return {
+        text: "Launching…",
+        color: "var(--color-surface-tint)",
+        opacity: 0.6,
+      };
+    case "impact":
+    case "result":
+      return {
+        text: "",
+        color: "var(--color-on-surface-variant)",
+        opacity: 0,
+      };
+    default:
+      return {
+        text: "Pull and release",
+        color: "var(--color-on-surface-variant)",
+        opacity: 0.55,
+      };
+  }
+}

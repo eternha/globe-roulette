@@ -1,0 +1,479 @@
+/* ── Result Card — glassmorphic bottom sheet ─────────────── */
+
+.result-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+/* ── Sheet container ─────────────────────────────────────── */
+
+.result-sheet {
+  position: relative;
+  pointer-events: auto;
+
+  /*
+   * Cap the sheet height so the globe remains visible behind it.
+   * Short phones (667px): ~60vh ≈ 400px → globe peeks above.
+   * Tall phones (932px):  ~60vh ≈ 559px → comfortable scroll.
+   */
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  background: linear-gradient(
+    168deg,
+    rgba(10, 22, 40, 0.82) 0%,
+    rgba(6, 14, 26, 0.88) 50%,
+    rgba(4, 10, 20, 0.92) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+
+  border-top: 1px solid rgba(0, 219, 233, 0.12);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.5),
+    0 -2px 20px rgba(0, 219, 233, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  padding: 0 var(--space-margin-edge) calc(env(safe-area-inset-bottom, 16px) + 20px);
+
+  /* Slide-up entrance */
+  animation: sheet-enter 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Top edge glow line */
+.result-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 219, 233, 0.4) 30%,
+    rgba(0, 219, 233, 0.6) 50%,
+    rgba(0, 219, 233, 0.4) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Drag handle ─────────────────────────────────────────── */
+
+.result-handle {
+  display: flex;
+  justify-content: center;
+  padding: 14px 0 6px;
+}
+
+.result-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Header: label + destination name ────────────────────── */
+
+.result-header {
+  text-align: center;
+  padding: 4px 0 20px;
+  animation: content-fade 0.5s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.result-name {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.1;
+  margin: 0;
+  /* Subtle text glow */
+  text-shadow:
+    0 0 20px rgba(0, 219, 233, 0.2),
+    0 0 60px rgba(0, 219, 233, 0.06);
+}
+
+.result-country {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+
+.result-divider {
+  height: 1px;
+  border: none;
+  margin: 0 12px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(0, 219, 233, 0.1) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
+    transparent 100%
+  );
+}
+
+/* ── Description block ───────────────────────────────────── */
+
+.result-description {
+  padding: 18px 4px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--color-on-surface);
+  opacity: 0.85;
+  text-align: center;
+  animation: content-fade 0.5s 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Info grid — stacked sections ────────────────────────── */
+
+.result-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0 8px;
+  animation: content-fade 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-info-card {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.result-info-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.result-info-value {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-on-surface);
+  opacity: 0.88;
+}
+
+/* ── Vibe pill ───────────────────────────────────────────── */
+
+.result-vibe-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  animation: content-fade 0.5s 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-vibe-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+.result-vibe-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(0, 219, 233, 0.08);
+  border: 1px solid rgba(0, 219, 233, 0.18);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-surface-tint);
+  letter-spacing: 0.02em;
+}
+
+/* ── Highlights ──────────────────────────────────────────── */
+
+.result-highlights {
+  padding: 8px 0 4px;
+  animation: content-fade 0.5s 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-highlights-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+
+.result-highlights-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.result-highlight-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-on-surface);
+  opacity: 0.8;
+}
+
+.result-highlight-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-surface-tint);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+
+.result-actions {
+  display: flex;
+  gap: 10px;
+  padding: 20px 0 4px;
+  animation: content-fade 0.5s 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  /* 44px minimum touch target (Apple HIG) */
+  min-height: 44px;
+  padding: 12px 0;
+  border-radius: 14px;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-btn:active {
+  transform: scale(0.96);
+}
+
+.result-btn:focus-visible {
+  outline: 2px solid var(--color-surface-tint);
+  outline-offset: 2px;
+}
+
+/* Primary — Try Again */
+.result-btn--primary {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.18) 0%,
+    rgba(0, 219, 233, 0.08) 100%
+  );
+  border: 1px solid rgba(0, 219, 233, 0.3);
+  color: var(--color-surface-tint);
+}
+
+.result-btn--primary:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.26) 0%,
+    rgba(0, 219, 233, 0.12) 100%
+  );
+  border-color: rgba(0, 219, 233, 0.45);
+  box-shadow: 0 0 16px rgba(0, 219, 233, 0.12);
+}
+
+/* Ghost — Save / Share */
+.result-btn--ghost {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-on-surface-variant);
+}
+
+.result-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Ghost active — saved state */
+.result-btn--ghost-active {
+  background: rgba(0, 219, 233, 0.06);
+  border: 1px solid rgba(0, 219, 233, 0.2);
+  color: var(--color-surface-tint);
+}
+
+.result-btn--ghost-active:hover {
+  background: rgba(0, 219, 233, 0.1);
+  border-color: rgba(0, 219, 233, 0.3);
+}
+
+/* SVG icons inside buttons */
+.result-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Toast notification ──────────────────────────────────── */
+
+.result-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: rgba(0, 219, 233, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 219, 233, 0.25);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-surface-tint);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  animation: toast-pop 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: none;
+}
+
+@keyframes toast-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px) scale(0.95);
+  }
+  12% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.98);
+  }
+}
+
+/* ── Shared staggered entrance ───────────────────────────── */
+
+@keyframes content-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Short phones (iPhone SE, iPhone 8) ──────────────────── */
+
+@media (max-height: 700px) {
+  .result-sheet {
+    max-height: 56vh;
+  }
+
+  .result-header {
+    padding: 2px 0 14px;
+  }
+
+  .result-name {
+    font-size: 26px;
+  }
+
+  .result-description {
+    padding: 12px 4px;
+    font-size: 13px;
+  }
+
+  .result-info-card {
+    padding: 10px 14px;
+  }
+
+  .result-info-value {
+    font-size: 12px;
+  }
+
+  .result-vibe-row {
+    padding: 8px 0;
+  }
+
+  .result-highlights {
+    padding: 6px 0 2px;
+  }
+
+  .result-actions {
+    padding: 14px 0 4px;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .result-sheet {
+    animation-duration: 0.01ms;
+  }
+  .result-header,
+  .result-description,
+  .result-sections,
+  .result-vibe-row,
+  .result-highlights,
+  .result-actions {
+    animation-duration: 0.01ms;
+  }
+  .result-toast {
+    animation-duration: 0.01ms;
+  }
+}
