@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { MathUtils } from "three";
+import { MathUtils, PerspectiveCamera } from "three";
 import { rouletteStore } from "../../stores/rouletteStore";
 import { getCameraZScale } from "../../lib/responsive";
 
@@ -45,6 +45,7 @@ export function CameraRig() {
   const { camera } = useThree();
   const currentZ = useRef(camera.position.z);
 
+  // eslint-disable-next-line react-hooks/immutability -- R3F useFrame mutates camera each frame by design
   useFrame((_state, delta) => {
     const { phase, pullStrength, launchProgress } = rouletteStore.getState();
 
@@ -52,7 +53,8 @@ export function CameraRig() {
      * Recompute scale factor each frame so orientation changes
      * (and resize events) are handled without remounting.
      */
-    const scale = getCameraZScale(camera.aspect);
+    const aspect = (camera as PerspectiveCamera).aspect ?? 1;
+    const scale = getCameraZScale(aspect);
 
     const idleZ = Z_IDLE * scale;
     const pullZ = Z_PULL_CLOSEST * scale;
@@ -82,7 +84,7 @@ export function CameraRig() {
         /* Bypass lerp — write the eased value directly so
            the zoom tracks the launch timeline exactly. */
         currentZ.current = targetZ;
-        camera.position.z = targetZ;
+        camera.position.z = targetZ; // eslint-disable-line react-hooks/immutability -- R3F requires direct camera mutation
         return;
       }
 

@@ -146,19 +146,24 @@ export function useRouletteMachine(): MachineReturn {
 
   const rafId = useRef(0);
   const launchStartTime = useRef(0);
+  const launchTickRef = useRef<(now: number) => void>(null);
 
-  const launchTick = useCallback((now: number) => {
-    const progress = Math.min(
-      (now - launchStartTime.current) / LAUNCH_DURATION_MS,
-      1,
-    );
-    rouletteStore.setLaunchProgress(progress);
+  /* Initialise in effect to satisfy react-hooks/refs (no ref access during render) */
+  useEffect(() => {
+    if (launchTickRef.current) return;
+    launchTickRef.current = (now: number) => {
+      const progress = Math.min(
+        (now - launchStartTime.current) / LAUNCH_DURATION_MS,
+        1,
+      );
+      rouletteStore.setLaunchProgress(progress);
 
-    if (progress < 1) {
-      rafId.current = requestAnimationFrame(launchTick);
-    } else {
-      dispatch({ type: "LAUNCH_COMPLETE" });
-    }
+      if (progress < 1) {
+        rafId.current = requestAnimationFrame(launchTickRef.current!);
+      } else {
+        dispatch({ type: "LAUNCH_COMPLETE" });
+      }
+    };
   }, []);
 
   /* ── Impact hold timer ─────────────────────────────────── */
@@ -205,7 +210,9 @@ export function useRouletteMachine(): MachineReturn {
       /* Start the rAF-driven launch animation (writes launchProgress 0→1) */
       rouletteStore.setLaunchProgress(0);
       launchStartTime.current = performance.now();
-      rafId.current = requestAnimationFrame(launchTick);
+      if (launchTickRef.current) {
+        rafId.current = requestAnimationFrame(launchTickRef.current);
+      }
     }
 
     /* ── launching → impact ──────────────────────────────── */
@@ -224,7 +231,7 @@ export function useRouletteMachine(): MachineReturn {
     return () => {
       clearTimeout(impactTimerId.current);
     };
-  }, [state.phase, state.selectedDestination, launchTick]);
+  }, [state.phase, state.selectedDestination]);
 
   /* ── Cleanup on unmount ────────────────────────────────── */
 

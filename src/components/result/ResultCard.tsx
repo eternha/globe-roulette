@@ -56,7 +56,9 @@ function IconShare() {
 /* ── Component ───────────────────────────────────────────── */
 
 export function ResultCard({ destination, onTryAgain }: ResultCardProps) {
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; id: number } | null>(
+    null,
+  );
   const [saved, setSaved] = useState(() =>
     isDestinationSaved(destination.id),
   );
@@ -64,7 +66,9 @@ export function ResultCard({ destination, onTryAgain }: ResultCardProps) {
   const showToast = useCallback((message: string) => {
     setToast(null);
     /* Force re-mount for animation restart */
-    requestAnimationFrame(() => setToast(message));
+    requestAnimationFrame(() =>
+      setToast({ message, id: performance.now() }),
+    );
   }, []);
 
   const handleSave = useCallback(() => {
@@ -198,11 +202,11 @@ export function ResultCard({ destination, onTryAgain }: ResultCardProps) {
       {/* Toast notification */}
       {toast && (
         <div
-          key={toast + Date.now()}
+          key={toast.id}
           className="result-toast"
           onAnimationEnd={() => setToast(null)}
         >
-          {toast}
+          {toast.message}
         </div>
       )}
     </>

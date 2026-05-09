@@ -12,7 +12,11 @@ export default function App() {
 
   const isInteractive = state.phase === "idle" || state.phase === "pulling";
 
-  const gestureBind = usePullGesture({
+  const {
+    ref: gestureRef,
+    onPointerDown: gesturePointerDown,
+    style: gestureStyle,
+  } = usePullGesture({
     onStart: () => send({ type: "START_PULL" }),
     onMove: (pullStrength, offsetY) =>
       send({ type: "UPDATE_PULL", pullStrength, offsetY }),
@@ -83,8 +87,8 @@ export default function App() {
           {!showResult && (
             <>
               <div
-                ref={gestureBind.ref}
-                onPointerDown={gestureBind.onPointerDown}
+                ref={gestureRef}
+                onPointerDown={gesturePointerDown}
                 style={{
                   pointerEvents: isInteractive ? "auto" : "none",
                   /* Generous touch target — extends well beyond the arrow
@@ -92,7 +96,7 @@ export default function App() {
                      lower-center zone. 80×120 minimum hit area. */
                   padding: "16px 28px 12px",
                   margin: "-16px -28px -12px",
-                  ...gestureBind.style,
+                  ...gestureStyle,
                 }}
               >
                 <PullArrow

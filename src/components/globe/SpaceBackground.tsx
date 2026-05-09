@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Points as PointsType, ShaderMaterial } from "three";
 import { AdditiveBlending } from "three";
@@ -10,6 +10,35 @@ import { AdditiveBlending } from "three";
 const IS_MOBILE = typeof window !== "undefined" && window.innerWidth < 500;
 const STAR_COUNT = IS_MOBILE ? 3500 : 6000;
 const SPREAD = 100;
+
+/* ── Pre-computed star field (module level — avoids impure calls during render) ── */
+
+function generateStarField(count: number, spread: number) {
+  const positions = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
+  const phases = new Float32Array(count);
+  const temps = new Float32Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3;
+    const r = spread * (0.3 + 0.7 * Math.random());
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+
+    positions[i3] = r * Math.sin(phi) * Math.cos(theta);
+    positions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    positions[i3 + 2] = r * Math.cos(phi);
+
+    const mag = Math.pow(Math.random(), 2.5);
+    sizes[i] = 0.4 + mag * 3.0;
+    phases[i] = Math.random();
+    temps[i] = Math.random();
+  }
+
+  return { positions, sizes, phases, temps };
+}
+
+const STAR_DATA = generateStarField(STAR_COUNT, SPREAD);
 
 const vertexShader = /* glsl */ `
   attribute float aSize;
@@ -62,30 +91,7 @@ export function SpaceBackground() {
   const ref = useRef<PointsType>(null);
   const matRef = useRef<ShaderMaterial>(null);
 
-  const { positions, sizes, phases, temps } = useMemo(() => {
-    const pos = new Float32Array(STAR_COUNT * 3);
-    const sz = new Float32Array(STAR_COUNT);
-    const ph = new Float32Array(STAR_COUNT);
-    const tp = new Float32Array(STAR_COUNT);
-
-    for (let i = 0; i < STAR_COUNT; i++) {
-      const i3 = i * 3;
-      const r = SPREAD * (0.3 + 0.7 * Math.random());
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-
-      pos[i3] = r * Math.sin(phi) * Math.cos(theta);
-      pos[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      pos[i3 + 2] = r * Math.cos(phi);
-
-      const mag = Math.pow(Math.random(), 2.5);
-      sz[i] = 0.4 + mag * 3.0;
-      ph[i] = Math.random();
-      tp[i] = Math.random();
-    }
-
-    return { positions: pos, sizes: sz, phases: ph, temps: tp };
-  }, []);
+  const { positions, sizes, phases, temps } = STAR_DATA;
 
   const uniforms = useMemo(
     () => ({
