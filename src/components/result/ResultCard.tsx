@@ -102,48 +102,29 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
     }
   }, [isDragging, dragY, onDismiss]);
 
-  const handlePointerDown = useCallback(
+  const handleHandlePointerDown = useCallback(
     (e: React.PointerEvent) => {
-      /* Only start drag from the handle area (top 50px of sheet) */
-      const rect = sheetRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      if (e.clientY - rect.top > 50) return;
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      e.preventDefault();
       handleDragStart(e.clientY);
     },
     [handleDragStart],
   );
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => handleDragMove(e.clientY),
-    [handleDragMove],
-  );
-
-  const handlePointerUp = useCallback(
-    () => handleDragEnd(),
-    [handleDragEnd],
-  );
-
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      const rect = sheetRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const touch = e.touches[0];
-      if (touch.clientY - rect.top > 50) return;
-      handleDragStart(touch.clientY);
-    },
-    [handleDragStart],
-  );
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
+  const handleHandlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
       if (!isDragging) return;
-      handleDragMove(e.touches[0].clientY);
+      e.preventDefault();
+      handleDragMove(e.clientY);
     },
     [isDragging, handleDragMove],
   );
 
-  const handleTouchEnd = useCallback(
-    () => handleDragEnd(),
+  const handleHandlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      handleDragEnd();
+    },
     [handleDragEnd],
   );
 
@@ -203,17 +184,15 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
             transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
             transition: isDragging ? "none" : undefined,
           }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
         >
           {/* Drag handle */}
-          <div className="result-handle" style={{ cursor: "grab" }}>
+          <div
+            className="result-handle"
+            onPointerDown={handleHandlePointerDown}
+            onPointerMove={handleHandlePointerMove}
+            onPointerUp={handleHandlePointerUp}
+            onPointerCancel={handleHandlePointerUp}
+          >
             <div className="result-handle-bar" />
           </div>
 

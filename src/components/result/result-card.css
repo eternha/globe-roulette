@@ -99,13 +99,26 @@
   display: flex;
   justify-content: center;
   padding: 14px 0 6px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.result-handle:active {
+  cursor: grabbing;
 }
 
 .result-handle-bar {
   width: 36px;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s;
+}
+
+.result-handle:hover .result-handle-bar {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* ── Header: label + destination name ────────────────────── */
