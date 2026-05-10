@@ -1,5 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Destination } from "./data/types";
+import { destinations } from "./data/destinations";
 import { GlobeScene } from "./components/globe/GlobeScene";
 import { PullArrow } from "./components/arrow/PullArrow";
 import { ResultCard } from "./components/result/ResultCard";
@@ -10,6 +11,30 @@ import { usePullGesture } from "./hooks/usePullGesture";
 export default function App() {
   const { state, send } = useRouletteMachine();
   const [savedOpen, setSavedOpen] = useState(false);
+
+  /* ── Deep-link: ?dest=<id> opens directly to that destination ── */
+  const deepLinkHandled = useRef(false);
+  useEffect(() => {
+    if (deepLinkHandled.current) return;
+    deepLinkHandled.current = true;
+
+    const params = new URLSearchParams(window.location.search);
+    const destId = params.get("dest");
+    if (!destId) return;
+
+    const dest = destinations.find((d) => d.id === destId);
+    if (!dest) return;
+
+    /* Small delay so the globe has time to initialize before navigating */
+    const timer = window.setTimeout(() => {
+      send({ type: "GOTO_DESTINATION", destination: dest });
+    }, 800);
+
+    /* Clean the URL so refreshing doesn't re-trigger */
+    window.history.replaceState({}, "", window.location.pathname);
+
+    return () => clearTimeout(timer);
+  }, [send]);
 
   /* ── Gesture → machine event wiring ────────────────────── */
 

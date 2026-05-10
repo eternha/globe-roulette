@@ -143,11 +143,14 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
   }, [destination.id, showToast]);
 
   const handleShare = useCallback(async () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}?dest=${encodeURIComponent(destination.id)}`;
+
     const shareText = [
       `${destination.name}, ${destination.country}`,
       destination.shortDescription,
       "",
-      "Travel Roulette chose our next trip ✈",
+      `Travel Roulette chose our next trip ✈`,
+      shareUrl,
     ].join("\n");
 
     if (typeof navigator.share === "function") {
@@ -155,6 +158,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
         await navigator.share({
           title: `${destination.name} — Travel Roulette`,
           text: shareText,
+          url: shareUrl,
         });
         showToast("Shared successfully");
         return;
