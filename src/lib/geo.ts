@@ -30,9 +30,18 @@ export function latLngToVector3(
 /**
  * Compute the globe Y-rotation (in radians) needed to face a given longitude.
  * Used to animate the globe so a destination rotates into view.
+ *
+ * Must be consistent with `latLngToVector3` which uses
+ * `theta = (lng + 180) * DEG2RAD`.  The rotation that places
+ * the destination's surface point at Z+ (facing the camera) is
+ * the negative of `atan2(x, z)` for that point on the equator.
  */
 export function lngToGlobeRotationY(lng: number): number {
-  return -lng * DEG2RAD;
+  const theta = (lng + 180) * DEG2RAD;
+  /* x and z of the unrotated surface point (equator, radius = 1) */
+  const x = -Math.cos(theta);
+  const z = Math.sin(theta);
+  return -Math.atan2(x, z);
 }
 
 /**
