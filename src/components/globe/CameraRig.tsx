@@ -8,8 +8,9 @@ import { getCameraZScale } from "../../lib/responsive";
 
 const Z_IDLE = 6.5;
 const Z_PULL_CLOSEST = 5.8;
-const Z_IMPACT = 4.0;
-const Z_RESULT = 4.6;
+const Z_IMPACT = 3.6;
+const Z_LANDED = 3.8;
+const Z_RESULT = 4.2;
 
 /**
  * Lerp rates per phase.
@@ -59,6 +60,7 @@ export function CameraRig() {
     const idleZ = Z_IDLE * scale;
     const pullZ = Z_PULL_CLOSEST * scale;
     const impactZ = Z_IMPACT * scale;
+    const landedZ = Z_LANDED * scale;
     const resultZ = Z_RESULT * scale;
 
     let targetZ: number;
@@ -91,6 +93,12 @@ export function CameraRig() {
       case "impact": {
         targetZ = impactZ;
         rate = RATE_IMPACT;
+        break;
+      }
+
+      case "landed": {
+        targetZ = landedZ;
+        rate = RATE_RESULT;
         break;
       }
 

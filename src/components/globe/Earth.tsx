@@ -160,6 +160,31 @@ export function Earth() {
           )
         : 0;
 
+    /* ── Stopped phases: globe is locked on the destination ── */
+    const isStopped =
+      phase === "impact" || phase === "landed" || phase === "result";
+
+    if (isStopped) {
+      /* Decelerate smoothly to zero */
+      const brakeAlpha = 1 - Math.exp(-6 * delta);
+      currentSpeed.current = MathUtils.lerp(currentSpeed.current, 0, brakeAlpha);
+
+      /* Lock rotation to the target so destination faces camera */
+      if (meshRef.current && targetRotationY != null) {
+        const lockAlpha = 1 - Math.exp(-4 * delta);
+        meshRef.current.rotation.y = MathUtils.lerp(
+          meshRef.current.rotation.y,
+          targetRotationY,
+          lockAlpha,
+        );
+        rouletteStore.setEarthRotationY(meshRef.current.rotation.y);
+      }
+      if (materialRef.current) {
+        materialRef.current.uniforms.uTime.value += delta;
+      }
+      return;
+    }
+
     /* Compute target speed based on current phase */
     let targetSpeed = IDLE_SPEED;
     if (phase === "pulling") {
@@ -214,7 +239,7 @@ export function Earth() {
         launchStarted.current = true;
       }
 
-      if (phase !== "launching" && phase !== "impact" && phase !== "result") {
+      if (phase !== "launching") {
         launchStarted.current = false;
       }
 
