@@ -27,7 +27,8 @@ export type RouletteEvent =
   | { type: "LAUNCH_COMPLETE" }
   | { type: "IMPACT_COMPLETE" }
   | { type: "REVEAL" }
-  | { type: "RESET" };
+  | { type: "RESET" }
+  | { type: "GOTO_DESTINATION"; destination: Destination };
 
 /* ── State ───────────────────────────────────────────────── */
 
@@ -123,6 +124,15 @@ function reducer(state: RouletteState, event: RouletteEvent): RouletteState {
       return { ...INITIAL_STATE };
     }
 
+    case "GOTO_DESTINATION": {
+      /* Jump directly to result with a specific destination */
+      return {
+        ...INITIAL_STATE,
+        phase: "result",
+        selectedDestination: event.destination,
+      };
+    }
+
     default:
       return state;
   }
@@ -203,6 +213,27 @@ export function useRouletteMachine(): MachineReturn {
       impactTimerId.current = window.setTimeout(() => {
         dispatch({ type: "IMPACT_COMPLETE" });
       }, IMPACT_HOLD_MS);
+    }
+
+    /* ── any → result (via GOTO_DESTINATION from saved panel) ── */
+    if (
+      state.phase === "result" &&
+      prev !== "result" &&
+      prev !== "landed" &&
+      state.selectedDestination
+    ) {
+      const currentY = rouletteStore.getState().earthRotationY;
+      const baseTarget = lngToGlobeRotationY(
+        state.selectedDestination.lng,
+      );
+      const TWO_PI = Math.PI * 2;
+
+      /* Find nearest equivalent rotation (no dramatic spin, just navigate) */
+      let target = baseTarget;
+      while (target < currentY - Math.PI) target += TWO_PI;
+      while (target > currentY + Math.PI) target -= TWO_PI;
+
+      rouletteStore.setTargetRotationY(target);
     }
 
     /* ── result/landed → idle (via RESET) ────────────────── */

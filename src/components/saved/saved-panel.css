@@ -151,6 +151,24 @@
 .saved-item-info {
   flex: 1;
   min-width: 0;
+  /* Reset button styles — this is a semantic button for a11y */
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.saved-item-info:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.saved-item-info:active {
+  background: rgba(0, 219, 233, 0.06);
 }
 
 .saved-item-name {

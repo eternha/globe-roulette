@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import type { Destination } from "./data/types";
 import { GlobeScene } from "./components/globe/GlobeScene";
 import { PullArrow } from "./components/arrow/PullArrow";
 import { ResultCard } from "./components/result/ResultCard";
@@ -37,6 +38,14 @@ export default function App() {
   const handleDismissResult = useCallback(() => {
     send({ type: "RESET" });
   }, [send]);
+
+  const handleGoToDestination = useCallback(
+    (dest: Destination) => {
+      setSavedOpen(false);
+      send({ type: "GOTO_DESTINATION", destination: dest });
+    },
+    [send],
+  );
 
   /* ── Derived view state ────────────────────────────────── */
 
@@ -229,7 +238,10 @@ export default function App() {
 
       {/* Saved destinations panel */}
       {savedOpen && (
-        <SavedPanel onClose={() => setSavedOpen(false)} />
+        <SavedPanel
+          onClose={() => setSavedOpen(false)}
+          onSelectDestination={handleGoToDestination}
+        />
       )}
     </>
   );

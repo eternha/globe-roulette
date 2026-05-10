@@ -7,7 +7,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  pointer-events: none;
+  /* Backdrop is clickable to dismiss on desktop */
+  pointer-events: auto;
+  cursor: default;
 }
 
 /* ── Sheet container ─────────────────────────────────────── */

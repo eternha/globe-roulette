@@ -9,6 +9,7 @@ import "./saved-panel.css";
 
 interface SavedPanelProps {
   readonly onClose: () => void;
+  readonly onSelectDestination?: (dest: Destination) => void;
 }
 
 /**
@@ -16,7 +17,7 @@ interface SavedPanelProps {
  * Pulls IDs from localStorage via savedDestinations lib,
  * resolves them against the master destinations list.
  */
-export function SavedPanel({ onClose }: SavedPanelProps) {
+export function SavedPanel({ onClose, onSelectDestination }: SavedPanelProps) {
   const [savedIds, setSavedIds] = useState(() =>
     getSavedDestinations().map((e) => e.id),
   );
@@ -90,11 +91,15 @@ export function SavedPanel({ onClose }: SavedPanelProps) {
           <ul className="saved-list">
             {savedDestinations.map((dest) => (
               <li key={dest.id} className="saved-item">
-                <div className="saved-item-info">
+                <button
+                  type="button"
+                  className="saved-item-info"
+                  onClick={() => onSelectDestination?.(dest)}
+                >
                   <p className="saved-item-name">{dest.name}</p>
                   <p className="saved-item-country">{dest.country}</p>
                   <p className="saved-item-vibe">{dest.vibe}</p>
-                </div>
+                </button>
                 <button
                   type="button"
                   className="saved-item-remove"

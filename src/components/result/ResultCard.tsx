@@ -176,10 +176,11 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
 
   return (
     <>
-      <div className="result-backdrop">
+      <div className="result-backdrop" onClick={onDismiss}>
         <div
           ref={sheetRef}
           className={`result-sheet ${isDismissing ? "result-sheet--dismissing" : ""}`}
+          onClick={(e) => e.stopPropagation()}
           style={{
             transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
             transition: isDragging ? "none" : undefined,
