@@ -30,4 +30,5 @@ export type MachinePhase =
   | "pulling"
   | "launching"
   | "impact"
+  | "landed"
   | "result";

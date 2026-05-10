@@ -3,6 +3,7 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import type { Mesh, ShaderMaterial } from "three";
 import { MathUtils, TextureLoader, SRGBColorSpace } from "three";
 import { rouletteStore } from "../../stores/rouletteStore";
+import { LAUNCH_DURATION_MS } from "../../hooks/useRouletteMachine";
 
 const RADIUS = 2;
 const SEGMENTS = 64;
@@ -145,10 +146,19 @@ export function Earth() {
     const {
       phase,
       pullStrength,
-      launchProgress,
+      launchStartTime,
       lastPullStrength,
       targetRotationY,
     } = rouletteStore.getState();
+
+    /* Compute live launch progress from start time */
+    const launchProgress =
+      phase === "launching" && launchStartTime > 0
+        ? Math.min(
+            (performance.now() - launchStartTime) / LAUNCH_DURATION_MS,
+            1,
+          )
+        : 0;
 
     /* Compute target speed based on current phase */
     let targetSpeed = IDLE_SPEED;

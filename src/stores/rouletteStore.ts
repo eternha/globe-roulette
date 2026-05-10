@@ -15,6 +15,8 @@ interface RouletteState {
   lastPullStrength: number;
   /** 0 → 1 progress through the launch animation */
   launchProgress: number;
+  /** performance.now() timestamp when the launch started */
+  launchStartTime: number;
   /** Destination chosen at launch time */
   selectedDestination: Destination | null;
   /** Current Y rotation of the Earth mesh (radians), written each frame */
@@ -31,6 +33,7 @@ const state: RouletteState = {
   pullStrength: 0,
   lastPullStrength: 0,
   launchProgress: 0,
+  launchStartTime: 0,
   selectedDestination: null,
   earthRotationY: 0,
   targetRotationY: null,
@@ -57,6 +60,10 @@ export const rouletteStore = {
     state.launchProgress = value;
   },
 
+  setLaunchStartTime(value: number): void {
+    state.launchStartTime = value;
+  },
+
   setSelectedDestination(dest: Destination | null): void {
     state.selectedDestination = dest;
   },
@@ -75,6 +82,7 @@ export const rouletteStore = {
     state.pullStrength = 0;
     state.lastPullStrength = 0;
     state.launchProgress = 0;
+    state.launchStartTime = 0;
     state.selectedDestination = null;
     state.earthRotationY = 0;
     state.targetRotationY = null;

@@ -59,6 +59,22 @@
   }
 }
 
+/* Dismiss: slide down and fade out */
+.result-sheet--dismissing {
+  animation: sheet-dismiss 0.35s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+@keyframes sheet-dismiss {
+  from {
+    opacity: 1;
+    transform: translateY(var(--drag-y, 0));
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
 /* Top edge glow line */
 .result-sheet::before {
   content: "";

@@ -144,7 +144,7 @@
 
 /* ── launching state: fly upward with trail ────────────── */
 .pull-arrow--launching {
-  animation: arrow-launch 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: arrow-launch 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   pointer-events: none;
 }
 
@@ -179,7 +179,7 @@
     rgba(0, 219, 233, 0.4) 60%,
     transparent 100%
   );
-  animation: launch-trail 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: launch-trail 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   pointer-events: none;
 }
 

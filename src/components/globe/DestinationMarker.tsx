@@ -162,7 +162,7 @@ export function DestinationMarker() {
     /* ── visibility gate ──────────────────────────── */
     const shouldShow =
       selectedDestination != null &&
-      (phase === "impact" || phase === "result");
+      (phase === "impact" || phase === "landed" || phase === "result");
 
     if (!shouldShow) {
       visible.current = false;

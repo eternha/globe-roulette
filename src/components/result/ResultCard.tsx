@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import type { Destination } from "../../data/types";
 import { getWhyNow } from "../../lib/whyNow";
 import {
@@ -10,9 +10,13 @@ import "./result-card.css";
 /** Maximum highlights shown on the card to keep it uncluttered. */
 const MAX_HIGHLIGHTS = 3;
 
+/** Minimum downward drag (px) before the sheet dismisses on release. */
+const DISMISS_THRESHOLD = 80;
+
 interface ResultCardProps {
   destination: Destination;
   onTryAgain: () => void;
+  onDismiss?: () => void;
 }
 
 /* ── Inline SVG icons (no external deps) ─────────────────── */
@@ -55,12 +59,92 @@ function IconShare() {
 
 /* ── Component ───────────────────────────────────────────── */
 
-export function ResultCard({ destination, onTryAgain }: ResultCardProps) {
+export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardProps) {
   const [toast, setToast] = useState<{ message: string; id: number } | null>(
     null,
   );
   const [saved, setSaved] = useState(() =>
     isDestinationSaved(destination.id),
+  );
+
+  /* ── Swipe-to-dismiss state ─────────────────────────────── */
+  const [dragY, setDragY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
+  const dragStartY = useRef(0);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  const handleDragStart = useCallback((clientY: number) => {
+    dragStartY.current = clientY;
+    setIsDragging(true);
+  }, []);
+
+  const handleDragMove = useCallback(
+    (clientY: number) => {
+      if (!isDragging) return;
+      const dy = Math.max(0, clientY - dragStartY.current);
+      setDragY(dy);
+    },
+    [isDragging],
+  );
+
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (dragY > DISMISS_THRESHOLD) {
+      setIsDismissing(true);
+      /* Let the CSS exit animation play, then call onDismiss */
+      setTimeout(() => {
+        onDismiss?.();
+      }, 350);
+    } else {
+      setDragY(0);
+    }
+  }, [isDragging, dragY, onDismiss]);
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      /* Only start drag from the handle area (top 50px of sheet) */
+      const rect = sheetRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      if (e.clientY - rect.top > 50) return;
+      handleDragStart(e.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => handleDragMove(e.clientY),
+    [handleDragMove],
+  );
+
+  const handlePointerUp = useCallback(
+    () => handleDragEnd(),
+    [handleDragEnd],
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const rect = sheetRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const touch = e.touches[0];
+      if (touch.clientY - rect.top > 50) return;
+      handleDragStart(touch.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging) return;
+      handleDragMove(e.touches[0].clientY);
+    },
+    [isDragging, handleDragMove],
+  );
+
+  const handleTouchEnd = useCallback(
+    () => handleDragEnd(),
+    [handleDragEnd],
   );
 
   const showToast = useCallback((message: string) => {
@@ -112,9 +196,24 @@ export function ResultCard({ destination, onTryAgain }: ResultCardProps) {
   return (
     <>
       <div className="result-backdrop">
-        <div className="result-sheet">
+        <div
+          ref={sheetRef}
+          className={`result-sheet ${isDismissing ? "result-sheet--dismissing" : ""}`}
+          style={{
+            transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
+            transition: isDragging ? "none" : undefined,
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
           {/* Drag handle */}
-          <div className="result-handle">
+          <div className="result-handle" style={{ cursor: "grab" }}>
             <div className="result-handle-bar" />
           </div>
 

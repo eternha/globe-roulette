@@ -3,6 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import type { Group, ShaderMaterial } from "three";
 import { AdditiveBlending, Color, Vector3, DoubleSide } from "three";
 import { rouletteStore } from "../../stores/rouletteStore";
+import { LAUNCH_DURATION_MS } from "../../hooks/useRouletteMachine";
 import { latLngToVector3 } from "../../lib/geo";
 import { Earth } from "./Earth";
 
@@ -148,7 +149,7 @@ export function Projectile() {
   useFrame(() => {
     const {
       phase,
-      launchProgress,
+      launchStartTime,
       selectedDestination,
       targetRotationY,
       earthRotationY,
@@ -158,6 +159,17 @@ export function Projectile() {
 
     /* Only visible during launching phase */
     const isLaunching = phase === "launching";
+
+    /* Compute live progress from start time (independent of rAF) */
+    const launchProgress = isLaunching && launchStartTime > 0
+      ? Math.min((performance.now() - launchStartTime) / LAUNCH_DURATION_MS, 1)
+      : 0;
+
+    /* Update store so other components can read it */
+    if (isLaunching) {
+      rouletteStore.setLaunchProgress(launchProgress);
+    }
+
     const inRange =
       isLaunching && launchProgress >= APPEAR_AT && launchProgress < 1.0;
 
@@ -236,7 +248,7 @@ export function Projectile() {
     }
 
     /* ── Scale: shrink as it approaches ────────────────── */
-    const scale = 0.8 + (1 - normalizedT) * 0.5;
+    const scale = 1.0 + (1 - normalizedT) * 0.6;
     groupRef.current.scale.setScalar(scale);
 
     /* ── Material intensity ───────────────────────────── */
@@ -246,7 +258,7 @@ export function Projectile() {
     const intensity = fadeIn * fadeOut;
 
     if (coreMatRef.current) {
-      coreMatRef.current.uniforms.uIntensity.value = intensity * 2.5;
+      coreMatRef.current.uniforms.uIntensity.value = intensity * 3.5;
 
       /* Color shift: start white-hot, transition to cyan */
       const colorT = Math.min(normalizedT * 1.5, 1);
@@ -258,7 +270,7 @@ export function Projectile() {
     }
 
     if (trailMatRef.current) {
-      trailMatRef.current.uniforms.uOpacity.value = intensity * 1.2;
+      trailMatRef.current.uniforms.uOpacity.value = intensity * 1.8;
     }
   });
 
@@ -266,7 +278,7 @@ export function Projectile() {
     <group ref={groupRef} visible={false}>
       {/* Core glow sphere */}
       <mesh>
-        <sphereGeometry args={[0.06, 12, 12]} />
+        <sphereGeometry args={[0.1, 16, 16]} />
         <shaderMaterial
           ref={coreMatRef}
           vertexShader={coreVertexShader}
@@ -279,8 +291,8 @@ export function Projectile() {
       </mesh>
 
       {/* Trail — stretched plane behind the projectile */}
-      <mesh position={[0, 0, -0.4]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.06, 0.8]} />
+      <mesh position={[0, 0, -0.6]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.1, 1.2]} />
         <shaderMaterial
           ref={trailMatRef}
           vertexShader={trailVertexShader}
@@ -295,10 +307,10 @@ export function Projectile() {
 
       {/* Cross trail for depth */}
       <mesh
-        position={[0, 0, -0.4]}
+        position={[0, 0, -0.6]}
         rotation={[Math.PI / 2, 0, Math.PI / 2]}
       >
-        <planeGeometry args={[0.06, 0.8]} />
+        <planeGeometry args={[0.1, 1.2]} />
         <shaderMaterial
           vertexShader={trailVertexShader}
           fragmentShader={trailFragmentShader}

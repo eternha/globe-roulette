@@ -9,11 +9,11 @@ import { lngToGlobeRotationY } from "../lib/geo";
 /** Minimum pull strength required to trigger a launch */
 const MIN_LAUNCH_STRENGTH = 0.15;
 
-/** Delay before auto-transitioning impact → result (ms) */
-const IMPACT_HOLD_MS = 600;
+/** Delay before auto-transitioning impact → landed (ms) */
+const IMPACT_HOLD_MS = 800;
 
-/** Total launch animation duration (ms) */
-const LAUNCH_DURATION_MS = 1200;
+/** Total launch animation duration (ms) — slower for visible projectile */
+export const LAUNCH_DURATION_MS = 2200;
 
 /** Extra full revolutions added during launch for dramatic spin */
 const DRAMATIC_SPIN_REVOLUTIONS = 2;
@@ -26,6 +26,7 @@ export type RouletteEvent =
   | { type: "RELEASE" }
   | { type: "LAUNCH_COMPLETE" }
   | { type: "IMPACT_COMPLETE" }
+  | { type: "REVEAL" }
   | { type: "RESET" };
 
 /* ── State ───────────────────────────────────────────────── */
@@ -46,21 +47,22 @@ const INITIAL_STATE: RouletteState = {
   lastPullStrength: 0,
 };
 
-/* ── Transition table (for debugging / reference) ────────── *
+/* ── Transition table ────────────────────────────────────── *
  *
- *  ┌─────────────┐  START_PULL   ┌──────────┐
- *  │    idle      │─────────────▶│ pulling  │
- *  └──────┬──────┘               └────┬─────┘
- *         ▲                      RELEASE│ (strength < min → idle)
- *   RESET │                           ▼
- *  ┌──────┴──────┐               ┌──────────┐
- *  │   result    │◀─────────────│ launching│
- *  └─────────────┘  IMPACT_     └────┬─────┘
- *         ▲          COMPLETE        │ LAUNCH_COMPLETE
- *         │                          ▼
- *         │                     ┌──────────┐
- *         └─────────────────────│  impact  │
- *                               └──────────┘
+ *  ┌──────────┐  START_PULL   ┌──────────┐
+ *  │   idle   │─────────────▶│ pulling  │
+ *  └────┬─────┘               └────┬─────┘
+ *       ▲                    RELEASE│ (strength < min → idle)
+ *  RESET│                         ▼
+ *  ┌────┴─────┐               ┌──────────┐
+ *  │  result  │               │ launching│
+ *  └────▲─────┘               └────┬─────┘
+ *       │                          │ LAUNCH_COMPLETE
+ *  REVEAL│                         ▼
+ *  ┌────┴─────┐               ┌──────────┐
+ *  │  landed  │◀──────────────│  impact  │
+ *  └──────────┘  IMPACT_      └──────────┘
+ *                COMPLETE
  */
 
 /* ── Reducer ─────────────────────────────────────────────── */
@@ -108,11 +110,16 @@ function reducer(state: RouletteState, event: RouletteEvent): RouletteState {
 
     case "IMPACT_COMPLETE": {
       if (state.phase !== "impact") return state;
+      return { ...state, phase: "landed" };
+    }
+
+    case "REVEAL": {
+      if (state.phase !== "landed") return state;
       return { ...state, phase: "result" };
     }
 
     case "RESET": {
-      if (state.phase !== "result") return state;
+      if (state.phase !== "result" && state.phase !== "landed") return state;
       return { ...INITIAL_STATE };
     }
 
@@ -128,46 +135,16 @@ interface MachineReturn {
   readonly send: (event: RouletteEvent) => void;
 }
 
-/**
- * Central state machine for the entire roulette experience.
- *
- * Owns all UI-facing state (phase, pull values, destination).
- * Manages side effects: launch rAF timer, impact→result timer,
- * globe target rotation, and ref-based store sync for R3F.
- *
- * Every state transition is triggered by an explicit RouletteEvent.
- * Invalid transitions are silently ignored (reducer returns current state).
- */
 export function useRouletteMachine(): MachineReturn {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const prevPhaseRef = useRef<MachinePhase>("idle");
 
-  /* ── rAF launch timer ──────────────────────────────────── */
+  /* ── Timer refs ────────────────────────────────────────── */
 
-  const rafId = useRef(0);
-  const launchStartTime = useRef(0);
-  const launchTickRef = useRef<(now: number) => void>(null);
+  /** setTimeout id for the launch duration timer */
+  const launchTimerId = useRef(0);
 
-  /* Initialise in effect to satisfy react-hooks/refs (no ref access during render) */
-  useEffect(() => {
-    if (launchTickRef.current) return;
-    launchTickRef.current = (now: number) => {
-      const progress = Math.min(
-        (now - launchStartTime.current) / LAUNCH_DURATION_MS,
-        1,
-      );
-      rouletteStore.setLaunchProgress(progress);
-
-      if (progress < 1) {
-        rafId.current = requestAnimationFrame(launchTickRef.current!);
-      } else {
-        dispatch({ type: "LAUNCH_COMPLETE" });
-      }
-    };
-  }, []);
-
-  /* ── Impact hold timer ─────────────────────────────────── */
-
+  /** setTimeout id for the impact hold timer */
   const impactTimerId = useRef(0);
 
   /* ── Sync machine state → ref-based store (for R3F) ────── */
@@ -192,7 +169,6 @@ export function useRouletteMachine(): MachineReturn {
 
     /* ── pulling → launching ─────────────────────────────── */
     if (state.phase === "launching" && prev !== "launching") {
-      /* Compute globe target rotation so the destination faces camera */
       if (state.selectedDestination) {
         const currentY = rouletteStore.getState().earthRotationY;
         const baseTarget = lngToGlobeRotationY(
@@ -207,12 +183,19 @@ export function useRouletteMachine(): MachineReturn {
         rouletteStore.setTargetRotationY(target);
       }
 
-      /* Start the rAF-driven launch animation (writes launchProgress 0→1) */
+      /*
+       * Record launch start time in the store so R3F components
+       * can compute their own progress each frame via useFrame.
+       * Use setTimeout (not rAF) for the state transition —
+       * rAF pauses when the tab loses visibility or focus.
+       */
+      rouletteStore.setLaunchStartTime(performance.now());
       rouletteStore.setLaunchProgress(0);
-      launchStartTime.current = performance.now();
-      if (launchTickRef.current) {
-        rafId.current = requestAnimationFrame(launchTickRef.current);
-      }
+
+      launchTimerId.current = window.setTimeout(() => {
+        rouletteStore.setLaunchProgress(1);
+        dispatch({ type: "LAUNCH_COMPLETE" });
+      }, LAUNCH_DURATION_MS);
     }
 
     /* ── launching → impact ──────────────────────────────── */
@@ -222,13 +205,15 @@ export function useRouletteMachine(): MachineReturn {
       }, IMPACT_HOLD_MS);
     }
 
-    /* ── result → idle (via RESET) ───────────────────────── */
-    if (state.phase === "idle" && prev === "result") {
+    /* ── result/landed → idle (via RESET) ────────────────── */
+    if (state.phase === "idle" && (prev === "result" || prev === "landed")) {
       rouletteStore.setLaunchProgress(0);
+      rouletteStore.setLaunchStartTime(0);
       rouletteStore.setTargetRotationY(null);
     }
 
     return () => {
+      clearTimeout(launchTimerId.current);
       clearTimeout(impactTimerId.current);
     };
   }, [state.phase, state.selectedDestination]);
@@ -237,7 +222,7 @@ export function useRouletteMachine(): MachineReturn {
 
   useEffect(() => {
     return () => {
-      cancelAnimationFrame(rafId.current);
+      clearTimeout(launchTimerId.current);
       clearTimeout(impactTimerId.current);
     };
   }, []);

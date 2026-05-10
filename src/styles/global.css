@@ -34,6 +34,11 @@ canvas {
   touch-action: none;
 }
 
+@keyframes tap-hint-pulse {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.05); }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
