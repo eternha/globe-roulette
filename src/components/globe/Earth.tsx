@@ -129,7 +129,7 @@ export function Earth() {
       uNightMap: { value: nightMap },
       uSpecularMap: { value: specularMap },
       uBumpMap: { value: bumpMap },
-      uSunDir: { value: [0.8, 0.4, 0.5] },
+      uSunDir: { value: rouletteStore.getState().sunDirection },
       uTime: { value: 0 },
     }),
     [dayMap, nightMap, specularMap, bumpMap],
@@ -193,6 +193,7 @@ export function Earth() {
       }
       if (materialRef.current) {
         materialRef.current.uniforms.uTime.value += delta;
+        materialRef.current.uniforms.uSunDir.value = rouletteStore.getState().sunDirection;
       }
       return;
     }
@@ -280,6 +281,7 @@ export function Earth() {
     }
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value += delta;
+      materialRef.current.uniforms.uSunDir.value = rouletteStore.getState().sunDirection;
     }
   });
 

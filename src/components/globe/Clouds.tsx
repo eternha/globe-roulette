@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
-import type { Mesh } from "three";
+import type { Mesh, ShaderMaterial } from "three";
 import { TextureLoader } from "three";
 import { Earth } from "./Earth";
 import { rouletteStore } from "../../stores/rouletteStore";
@@ -66,12 +66,13 @@ const fragmentShader = /* glsl */ `
 
 export function Clouds() {
   const meshRef = useRef<Mesh>(null);
+  const matRef = useRef<ShaderMaterial>(null);
   const cloudMap = useLoader(TextureLoader, "/textures/earth_clouds.jpg");
 
   const uniforms = useMemo(
     () => ({
       uCloudMap: { value: cloudMap },
-      uSunDir: { value: [0.8, 0.4, 0.5] },
+      uSunDir: { value: rouletteStore.getState().sunDirection },
     }),
     [cloudMap],
   );
@@ -82,12 +83,17 @@ export function Clouds() {
     /* Follow Earth rotation + slight offset for parallax */
     const earthY = rouletteStore.getState().earthRotationY;
     meshRef.current.rotation.y = earthY + CLOUD_SPEED_OFFSET;
+
+    if (matRef.current) {
+      matRef.current.uniforms.uSunDir.value = rouletteStore.getState().sunDirection;
+    }
   });
 
   return (
     <mesh ref={meshRef} scale={CLOUD_ALTITUDE}>
       <sphereGeometry args={[Earth.RADIUS, 64, 64]} />
       <shaderMaterial
+        ref={matRef}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={uniforms}

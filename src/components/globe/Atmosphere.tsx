@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import type { ShaderMaterial } from "three";
 import { BackSide, AdditiveBlending } from "three";
 import { Earth } from "./Earth";
+import { rouletteStore } from "../../stores/rouletteStore";
 
 /** Atmosphere shell — just barely above the surface */
 const ATM_SCALE = 1.04;
@@ -46,17 +49,26 @@ const fragmentShader = /* glsl */ `
 `;
 
 export function Atmosphere() {
+  const matRef = useRef<ShaderMaterial>(null);
+
   const uniforms = useMemo(
     () => ({
-      uSunDir: { value: [0.8, 0.4, 0.5] },
+      uSunDir: { value: rouletteStore.getState().sunDirection },
     }),
     [],
   );
+
+  useFrame(() => {
+    if (matRef.current) {
+      matRef.current.uniforms.uSunDir.value = rouletteStore.getState().sunDirection;
+    }
+  });
 
   return (
     <mesh scale={ATM_SCALE}>
       <sphereGeometry args={[Earth.RADIUS, 64, 64]} />
       <shaderMaterial
+        ref={matRef}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={uniforms}
