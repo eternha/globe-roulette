@@ -1,7 +1,7 @@
-import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useMemo, useEffect } from "react";
+import { useFrame, useLoader } from "@react-three/fiber";
 import type { Mesh, ShaderMaterial } from "three";
-import { Color, MathUtils } from "three";
+import { MathUtils, TextureLoader, SRGBColorSpace } from "three";
 import { rouletteStore } from "../../stores/rouletteStore";
 
 const RADIUS = 2;
@@ -18,122 +18,120 @@ const LAUNCH_PEAK_SPEED = 3.5;
  */
 const LERP_RATE = 5;
 
-const LAND_COLOR = new Color("#1a6b4a");
-const OCEAN_COLOR = new Color("#0a2a4a");
-const ICE_COLOR = new Color("#c8dce8");
-const COAST_COLOR = new Color("#2a8b6a");
+/* ── Custom PBR-like shader with day/night, specular, bump ── */
 
-/**
- * Procedural Earth shader.
- * Generates a recognizable globe with continents, oceans, and ice caps
- * using layered simplex-like noise. Designed to be replaced with real
- * textures once available — just swap the material.
- */
 const vertexShader = /* glsl */ `
   varying vec3 vNormal;
   varying vec3 vPosition;
   varying vec2 vUv;
+  varying vec3 vViewDir;
 
   void main() {
     vNormal = normalize(normalMatrix * normal);
-    vPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+    vec4 worldPos = modelMatrix * vec4(position, 1.0);
+    vPosition = worldPos.xyz;
     vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    vViewDir = normalize(-mvPos.xyz);
+
+    gl_Position = projectionMatrix * mvPos;
   }
 `;
 
 const fragmentShader = /* glsl */ `
-  uniform vec3 uLandColor;
-  uniform vec3 uOceanColor;
-  uniform vec3 uIceColor;
-  uniform vec3 uCoastColor;
-  uniform vec3 uLightDir;
+  uniform sampler2D uDayMap;
+  uniform sampler2D uNightMap;
+  uniform sampler2D uSpecularMap;
+  uniform sampler2D uBumpMap;
+  uniform vec3 uSunDir;
   uniform float uTime;
 
   varying vec3 vNormal;
   varying vec3 vPosition;
   varying vec2 vUv;
-
-  // simplex-style hash
-  vec3 hash3(vec3 p) {
-    p = vec3(
-      dot(p, vec3(127.1, 311.7, 74.7)),
-      dot(p, vec3(269.5, 183.3, 246.1)),
-      dot(p, vec3(113.5, 271.9, 124.6))
-    );
-    return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-  }
-
-  float noise3d(vec3 p) {
-    vec3 i = floor(p);
-    vec3 f = fract(p);
-    vec3 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(
-      mix(
-        mix(dot(hash3(i + vec3(0,0,0)), f - vec3(0,0,0)),
-            dot(hash3(i + vec3(1,0,0)), f - vec3(1,0,0)), u.x),
-        mix(dot(hash3(i + vec3(0,1,0)), f - vec3(0,1,0)),
-            dot(hash3(i + vec3(1,1,0)), f - vec3(1,1,0)), u.x), u.y),
-      mix(
-        mix(dot(hash3(i + vec3(0,0,1)), f - vec3(0,0,1)),
-            dot(hash3(i + vec3(1,0,1)), f - vec3(1,0,1)), u.x),
-        mix(dot(hash3(i + vec3(0,1,1)), f - vec3(0,1,1)),
-            dot(hash3(i + vec3(1,1,1)), f - vec3(1,1,1)), u.x), u.y),
-      u.z
-    );
-  }
-
-  float fbm(vec3 p) {
-    float val = 0.0;
-    float amp = 0.5;
-    float freq = 1.0;
-    for (int i = 0; i < 5; i++) {
-      val += amp * noise3d(p * freq);
-      amp *= 0.5;
-      freq *= 2.0;
-    }
-    return val;
-  }
+  varying vec3 vViewDir;
 
   void main() {
-    vec3 spherePos = normalize(vPosition) * 3.0;
-    float n = fbm(spherePos + vec3(0.0, 0.0, 1.5));
+    /* ── Sample textures ────────────────────────────────── */
+    vec3 dayColor = texture2D(uDayMap, vUv).rgb;
+    vec3 nightColor = texture2D(uNightMap, vUv).rgb;
+    float specMask = texture2D(uSpecularMap, vUv).r;
 
-    float landMask = smoothstep(-0.02, 0.05, n);
-    float iceMask = smoothstep(0.75, 0.85, abs(vUv.y - 0.5) * 2.0);
+    /* ── Bump-mapped normal (finite differences) ────────── */
+    float bumpScale = 0.015;
+    float texelSize = 1.0 / 2048.0;
+    float hL = texture2D(uBumpMap, vUv - vec2(texelSize, 0.0)).r;
+    float hR = texture2D(uBumpMap, vUv + vec2(texelSize, 0.0)).r;
+    float hD = texture2D(uBumpMap, vUv - vec2(0.0, texelSize)).r;
+    float hU = texture2D(uBumpMap, vUv + vec2(0.0, texelSize)).r;
 
-    vec3 land = mix(uLandColor, uCoastColor, smoothstep(0.0, 0.15, n));
-    vec3 color = mix(uOceanColor, land, landMask);
-    color = mix(color, uIceColor, iceMask * 0.8);
+    vec3 bumpNormal = normalize(vNormal +
+      bumpScale * ((hR - hL) * cross(vNormal, vec3(0.0, 1.0, 0.0)) +
+                   (hU - hD) * cross(vec3(1.0, 0.0, 0.0), vNormal)));
 
-    // Lighting
-    float diffuse = max(dot(vNormal, uLightDir), 0.0);
-    float ambient = 0.12;
-    float rim = pow(1.0 - max(dot(vNormal, normalize(cameraPosition - vPosition)), 0.0), 3.0);
+    /* ── Diffuse lighting ───────────────────────────────── */
+    float NdotL = dot(bumpNormal, uSunDir);
+    float diffuse = max(NdotL, 0.0);
 
-    vec3 lit = color * (ambient + diffuse * 0.88);
-    lit += vec3(0.0, 0.85, 0.92) * rim * 0.15;
+    /* ── Specular (Blinn-Phong) — oceans only ───────────── */
+    vec3 halfDir = normalize(uSunDir + vViewDir);
+    float spec = pow(max(dot(bumpNormal, halfDir), 0.0), 80.0);
+    spec *= specMask * diffuse;
 
-    gl_FragColor = vec4(lit, 1.0);
+    /* ── Day / night blend ──────────────────────────────── */
+    float terminator = smoothstep(-0.15, 0.2, NdotL);
+    vec3 litDay = dayColor * (0.06 + diffuse * 0.94);
+    litDay += vec3(0.85, 0.95, 1.0) * spec * 0.6;
+
+    /* Night lights: boost brightness and warm them up */
+    vec3 litNight = nightColor * 1.8;
+
+    vec3 color = mix(litNight, litDay, terminator);
+
+    /* ── Subtle atmospheric rim tint (thin limb glow) ──── */
+    float rim = 1.0 - max(dot(vNormal, vViewDir), 0.0);
+    float rimGlow = pow(rim, 5.0) * 0.2;
+    vec3 rimColor = vec3(0.3, 0.55, 1.0);
+    color += rimColor * rimGlow * terminator;
+
+    gl_FragColor = vec4(color, 1.0);
   }
 `;
+
+/* ── Component ──────────────────────────────────────────── */
 
 export function Earth() {
   const meshRef = useRef<Mesh>(null);
   const materialRef = useRef<ShaderMaterial>(null);
   const currentSpeed = useRef(IDLE_SPEED);
 
+  /* Load textures */
+  const [dayMap, nightMap, specularMap, bumpMap] = useLoader(TextureLoader, [
+    "/textures/earth_day.jpg",
+    "/textures/earth_night.jpg",
+    "/textures/earth_specular.jpg",
+    "/textures/earth_normal.jpg",
+  ]);
+
+  /* Ensure day map renders in correct color space */
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability -- Three.js textures require mutable colorSpace assignment
+    dayMap.colorSpace = SRGBColorSpace;
+    // eslint-disable-next-line react-hooks/immutability
+    nightMap.colorSpace = SRGBColorSpace;
+  }, [dayMap, nightMap]);
+
   const uniforms = useMemo(
     () => ({
-      uLandColor: { value: LAND_COLOR },
-      uOceanColor: { value: OCEAN_COLOR },
-      uIceColor: { value: ICE_COLOR },
-      uCoastColor: { value: COAST_COLOR },
-      uLightDir: { value: [0.8, 0.6, 0.5] },
+      uDayMap: { value: dayMap },
+      uNightMap: { value: nightMap },
+      uSpecularMap: { value: specularMap },
+      uBumpMap: { value: bumpMap },
+      uSunDir: { value: [0.8, 0.4, 0.5] },
       uTime: { value: 0 },
     }),
-    [],
+    [dayMap, nightMap, specularMap, bumpMap],
   );
 
   /**
@@ -199,12 +197,6 @@ export function Earth() {
        * spin freely (dramatic acceleration). In the final ~60% we
        * smoothly interpolate rotation toward the pre-computed target
        * so the selected destination faces the camera on impact.
-       *
-       * The blend uses a cubic ease-in so the steering is invisible
-       * at first and increasingly dominant as the globe decelerates.
-       *
-       * TODO: v2 — add latitude alignment via camera polar tilt or
-       * Earth X-rotation for full lat/lng orientation.
        */
 
       if (phase === "launching" && !launchStarted.current) {
@@ -222,18 +214,12 @@ export function Earth() {
         launchProgress > 0.4;
 
       if (shouldSteer) {
-        /*
-         * steerT goes 0→1 as launchProgress goes 0.4→1.0
-         * Cubic ease-in: slow start, strong finish.
-         */
         const steerT = (launchProgress - 0.4) / 0.6;
         const easedSteer = steerT * steerT * steerT;
 
-        /* Free-spin position (what rotation would be without steering) */
         const freeRotation =
           meshRef.current.rotation.y + delta * currentSpeed.current;
 
-        /* Blend between free-spin and target */
         meshRef.current.rotation.y = MathUtils.lerp(
           freeRotation,
           targetRotationY,

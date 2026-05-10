@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { AdditiveBlending, FrontSide, Color } from "three";
+import { AdditiveBlending, FrontSide } from "three";
 import { Earth } from "./Earth";
 
-const GLOW_SCALE = 2.8;
-const GLOW_COLOR = new Color("#00a0d6");
+/** Subtle outer halo — much smaller than before */
+const GLOW_SCALE = 1.3;
 
 const vertexShader = /* glsl */ `
   varying vec3 vNormal;
@@ -18,28 +18,25 @@ const vertexShader = /* glsl */ `
 `;
 
 const fragmentShader = /* glsl */ `
-  uniform vec3 uColor;
-
   varying vec3 vNormal;
   varying vec3 vViewDir;
 
   void main() {
     float rim = 1.0 - max(dot(vNormal, vViewDir), 0.0);
-    float glow = pow(rim, 3.0) * 0.35;
-    float inner = pow(rim, 6.0) * 0.5;
+
+    /* Very soft, barely visible glow */
+    float glow = pow(rim, 6.0) * 0.1;
+    float inner = pow(rim, 12.0) * 0.15;
     float intensity = glow + inner;
 
-    gl_FragColor = vec4(uColor, intensity);
+    vec3 glowColor = vec3(0.2, 0.45, 0.9);
+
+    gl_FragColor = vec4(glowColor, intensity);
   }
 `;
 
 export function EarthGlow() {
-  const uniforms = useMemo(
-    () => ({
-      uColor: { value: GLOW_COLOR },
-    }),
-    [],
-  );
+  const uniforms = useMemo(() => ({}), []);
 
   return (
     <mesh scale={GLOW_SCALE}>

@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Earth } from "./Earth";
+import { Clouds } from "./Clouds";
 import { Atmosphere } from "./Atmosphere";
-import { EarthGlow } from "./EarthGlow";
+// EarthGlow removed — Earth shader rim + Atmosphere BackSide is sufficient
 import { SpaceBackground } from "./SpaceBackground";
 import { CameraRig } from "./CameraRig";
 import { DestinationMarker } from "./DestinationMarker";
@@ -11,11 +12,20 @@ import { getInitialCameraZ } from "../../lib/responsive";
 export const BASE_CAMERA_Z = 6.5;
 const CAMERA_FOV = 60;
 
+/**
+ * Fallback Earth while textures load — simple dark sphere
+ * so the scene doesn't flash white during loading.
+ */
+function EarthFallback() {
+  return (
+    <mesh>
+      <sphereGeometry args={[2, 32, 32]} />
+      <meshBasicMaterial color="#0a1628" />
+    </mesh>
+  );
+}
+
 export function GlobeScene() {
-  /*
-   * Compute the initial camera Z once at mount time.
-   * CameraRig takes over on subsequent frames and handles resizing.
-   */
   const initialZ = useMemo(() => getInitialCameraZ(BASE_CAMERA_Z), []);
 
   return (
@@ -38,18 +48,24 @@ export function GlobeScene() {
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: false }}
       >
-        <ambientLight intensity={0.1} />
-        <directionalLight position={[5, 3, 4]} intensity={1.5} />
+        {/* Key light — warm sunlight */}
+        <directionalLight position={[5, 3, 4]} intensity={1.8} />
+        {/* Fill light — cool blue from opposite side */}
         <directionalLight
-          position={[-3, -1, 2]}
-          intensity={0.15}
+          position={[-4, -1, 2]}
+          intensity={0.08}
           color="#4488cc"
         />
+        {/* Minimal ambient for deep shadows */}
+        <ambientLight intensity={0.04} />
 
         <CameraRig />
         <SpaceBackground />
-        <EarthGlow />
-        <Earth />
+        <Suspense fallback={<EarthFallback />}>
+          <Earth />
+          <Clouds />
+        </Suspense>
+
         <Atmosphere />
         <DestinationMarker />
       </Canvas>
