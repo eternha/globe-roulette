@@ -43,7 +43,7 @@ export default function App() {
   const showResult = state.phase === "result";
   const isLanded = state.phase === "landed";
   const hideArrowArea =
-    showResult || isLanded || state.phase === "impact";
+    showResult || isLanded || state.phase === "impact" || state.phase === "launching";
 
   const hint = getHint(state.phase);
 

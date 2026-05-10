@@ -169,12 +169,24 @@ export function Earth() {
       const brakeAlpha = 1 - Math.exp(-6 * delta);
       currentSpeed.current = MathUtils.lerp(currentSpeed.current, 0, brakeAlpha);
 
-      /* Lock rotation to the target so destination faces camera */
+      /* Lock rotation to the destination's longitude (strip spin revolutions) */
       if (meshRef.current && targetRotationY != null) {
+        const TWO_PI = Math.PI * 2;
+        const currentY = meshRef.current.rotation.y;
+
+        /*
+         * Normalize target into the same "revolution" as the current rotation
+         * so the lerp doesn't try to unwind through extra full spins.
+         */
+        let normalizedTarget = targetRotationY % TWO_PI;
+        /* Bring into same range as currentY */
+        while (normalizedTarget < currentY - Math.PI) normalizedTarget += TWO_PI;
+        while (normalizedTarget > currentY + Math.PI) normalizedTarget -= TWO_PI;
+
         const lockAlpha = 1 - Math.exp(-4 * delta);
         meshRef.current.rotation.y = MathUtils.lerp(
-          meshRef.current.rotation.y,
-          targetRotationY,
+          currentY,
+          normalizedTarget,
           lockAlpha,
         );
         rouletteStore.setEarthRotationY(meshRef.current.rotation.y);
