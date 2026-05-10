@@ -20,13 +20,11 @@
 
   /*
    * Cap the sheet height so the globe remains visible behind it.
-   * Short phones (667px): ~60vh ≈ 400px → globe peeks above.
-   * Tall phones (932px):  ~60vh ≈ 559px → comfortable scroll.
+   * The sheet itself is a flex column: fixed handle + scrollable content.
    */
   max-height: 60vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
 
   background: linear-gradient(
     168deg,
@@ -44,10 +42,20 @@
     0 -2px 20px rgba(0, 219, 233, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-  padding: 0 var(--space-margin-edge) calc(env(safe-area-inset-bottom, 16px) + 20px);
-
   /* Slide-up entrance */
   animation: sheet-enter 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Scrollable content wrapper ────────────────────────────
+   Separated from the handle so overflow-y never steals
+   pointer events from the drag interaction.            ── */
+
+.result-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0 var(--space-margin-edge) calc(env(safe-area-inset-bottom, 16px) + 20px);
 }
 
 @keyframes sheet-enter {
@@ -100,7 +108,8 @@
 .result-handle {
   display: flex;
   justify-content: center;
-  padding: 14px 0 6px;
+  padding: 16px 0 10px;
+  flex-shrink: 0;
   touch-action: none;
   cursor: grab;
   user-select: none;
@@ -455,6 +464,7 @@
   .result-sheet {
     max-height: 56vh;
   }
+
 
   .result-header {
     padding: 2px 0 14px;

@@ -186,7 +186,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
             transition: isDragging ? "none" : undefined,
           }}
         >
-          {/* Drag handle */}
+          {/* Drag handle — outside the scrollable area so scroll never steals pointer */}
           <div
             className="result-handle"
             onPointerDown={handleHandlePointerDown}
@@ -197,83 +197,86 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
             <div className="result-handle-bar" />
           </div>
 
-          {/* Header */}
-          <div className="result-header">
-            <p className="result-label">Your destination</p>
-            <h2 className="result-name">{destination.name}</h2>
-            <p className="result-country">{destination.country}</p>
-          </div>
-
-          <hr className="result-divider" />
-
-          {/* Description */}
-          <p className="result-description">{destination.shortDescription}</p>
-
-          {/* Info sections */}
-          <div className="result-sections">
-            <div className="result-info-card">
-              <p className="result-info-label">Why visit</p>
-              <p className="result-info-value">{destination.whyVisit}</p>
+          {/* Scrollable content */}
+          <div className="result-scroll">
+            {/* Header */}
+            <div className="result-header">
+              <p className="result-label">Your destination</p>
+              <h2 className="result-name">{destination.name}</h2>
+              <p className="result-country">{destination.country}</p>
             </div>
 
-            <div className="result-info-card">
-              <p className="result-info-label">Why now</p>
-              <p className="result-info-value">{whyNow}</p>
+            <hr className="result-divider" />
+
+            {/* Description */}
+            <p className="result-description">{destination.shortDescription}</p>
+
+            {/* Info sections */}
+            <div className="result-sections">
+              <div className="result-info-card">
+                <p className="result-info-label">Why visit</p>
+                <p className="result-info-value">{destination.whyVisit}</p>
+              </div>
+
+              <div className="result-info-card">
+                <p className="result-info-label">Why now</p>
+                <p className="result-info-value">{whyNow}</p>
+              </div>
+
+              <div className="result-info-card">
+                <p className="result-info-label">Best time</p>
+                <p className="result-info-value">{destination.bestSeason}</p>
+              </div>
             </div>
 
-            <div className="result-info-card">
-              <p className="result-info-label">Best time</p>
-              <p className="result-info-value">{destination.bestSeason}</p>
+            {/* Vibe */}
+            <div className="result-vibe-row">
+              <span className="result-vibe-label">Vibe</span>
+              <span className="result-vibe-pill">{destination.vibe}</span>
             </div>
-          </div>
 
-          {/* Vibe */}
-          <div className="result-vibe-row">
-            <span className="result-vibe-label">Vibe</span>
-            <span className="result-vibe-pill">{destination.vibe}</span>
-          </div>
-
-          {/* Highlights */}
-          <div className="result-highlights">
-            <p className="result-highlights-label">Highlights</p>
-            <div className="result-highlights-list">
-              {highlights.map((h, i) => (
-                <span key={`${h}-${i}`} className="result-highlight-tag">
-                  <span className="result-highlight-dot" />
-                  {h}
-                </span>
-              ))}
+            {/* Highlights */}
+            <div className="result-highlights">
+              <p className="result-highlights-label">Highlights</p>
+              <div className="result-highlights-list">
+                {highlights.map((h, i) => (
+                  <span key={`${h}-${i}`} className="result-highlight-tag">
+                    <span className="result-highlight-dot" />
+                    {h}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Actions */}
-          <div className="result-actions">
-            <button
-              type="button"
-              className="result-btn result-btn--primary"
-              onClick={onTryAgain}
-            >
-              <IconRefresh />
-              Try again
-            </button>
+            {/* Actions */}
+            <div className="result-actions">
+              <button
+                type="button"
+                className="result-btn result-btn--primary"
+                onClick={onTryAgain}
+              >
+                <IconRefresh />
+                Try again
+              </button>
 
-            <button
-              type="button"
-              className={`result-btn ${saved ? "result-btn--ghost-active" : "result-btn--ghost"}`}
-              onClick={handleSave}
-            >
-              <IconBookmark filled={saved} />
-              {saved ? "Saved" : "Save"}
-            </button>
+              <button
+                type="button"
+                className={`result-btn ${saved ? "result-btn--ghost-active" : "result-btn--ghost"}`}
+                onClick={handleSave}
+              >
+                <IconBookmark filled={saved} />
+                {saved ? "Saved" : "Save"}
+              </button>
 
-            <button
-              type="button"
-              className="result-btn result-btn--ghost"
-              onClick={handleShare}
-            >
-              <IconShare />
-              Share
-            </button>
+              <button
+                type="button"
+                className="result-btn result-btn--ghost"
+                onClick={handleShare}
+              >
+                <IconShare />
+                Share
+              </button>
+            </div>
           </div>
         </div>
       </div>
