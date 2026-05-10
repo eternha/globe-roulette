@@ -7,6 +7,7 @@ import { Atmosphere } from "./Atmosphere";
 import { SpaceBackground } from "./SpaceBackground";
 import { CameraRig } from "./CameraRig";
 import { DestinationMarker } from "./DestinationMarker";
+import { Projectile } from "./Projectile";
 import { getInitialCameraZ } from "../../lib/responsive";
 
 export const BASE_CAMERA_Z = 6.5;
@@ -67,6 +68,7 @@ export function GlobeScene() {
         </Suspense>
 
         <Atmosphere />
+        <Projectile />
         <DestinationMarker />
       </Canvas>
     </div>
