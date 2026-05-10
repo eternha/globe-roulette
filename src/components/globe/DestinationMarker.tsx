@@ -109,10 +109,10 @@ const beamFragmentShader = /* glsl */ `
 
 const MARKER_COLOR = new Color("#00dbe9");
 const MARKER_HOT = new Color("#e0fcff");
-const DOT_RADIUS = 0.12;
-const RING_SIZE = 0.8;
-const BEAM_WIDTH = 0.12;
-const BEAM_HEIGHT = 1.2;
+const DOT_RADIUS = 0.07;
+const RING_SIZE = 0.5;
+const BEAM_WIDTH = 0.08;
+const BEAM_HEIGHT = 0.7;
 
 /** How long the impact burst lasts (seconds) */
 const BURST_DURATION = 1.2;
@@ -213,8 +213,8 @@ export function DestinationMarker() {
     /* ── dot intensity ────────────────────────────── */
     if (dotMatRef.current) {
       /* Burst bright then settle to gentle breathing */
-      const burst = t < 1 ? 3.0 * (1 - t * t) : 0;
-      const breathe = 1.2 + 0.5 * Math.sin(elapsedSinceImpact.current * 2.5);
+      const burst = t < 1 ? 2.0 * (1 - t * t) : 0;
+      const breathe = 0.9 + 0.4 * Math.sin(elapsedSinceImpact.current * 2.5);
       dotMatRef.current.uniforms.uIntensity.value = burst + breathe;
 
       /* Transition color from white-hot to cyan */
