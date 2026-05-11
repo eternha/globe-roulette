@@ -53,12 +53,9 @@ interface PackSheetProps {
 export function PackSheet({ onClose }: PackSheetProps) {
   const packs = getAllPacks();
 
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget) onClose();
-    },
-    [onClose],
-  );
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose();
+  };
 
   const handlePackClick = useCallback((packId: string) => {
     trackDestinationPackSelected(packId);

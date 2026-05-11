@@ -75,6 +75,7 @@ function buildAiraloUrl(params: AffiliateUrlParams): string | null {
   return base;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buildSafetyWingUrl(_params: AffiliateUrlParams): string | null {
   const provider = getProvider("safetywing");
   if (!provider) return null;
