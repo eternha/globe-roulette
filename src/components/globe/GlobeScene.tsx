@@ -51,7 +51,7 @@ function DynamicLighting() {
   const currentDaylight = useRef(0.5);
 
   useFrame((_state, delta) => {
-    const { sunDirection, daylightFactor } = rouletteStore.getState();
+    const { daylightFactor } = rouletteStore.getState();
 
     /* Smooth transitions (exponential convergence) */
     const alpha = 1 - Math.exp(-1.5 * delta);
@@ -63,33 +63,28 @@ function DynamicLighting() {
 
     const dl = currentDaylight.current;
 
-    /* ── Key light: follows sun, intensity varies with daylight ── */
+    /* ── Key light: fixed front-right position, intensity varies ──
+     *  The Earth shader already handles realistic day/night via uSunDir.
+     *  Scene lights provide pleasant illumination of the camera-facing
+     *  hemisphere, with intensity/warmth driven by the viewer's local
+     *  time of day (daylightFactor). */
     if (keyRef.current) {
-      // Position the key light in the sun's direction (scaled out)
-      keyRef.current.position.set(
-        sunDirection[0] * 5,
-        sunDirection[1] * 3 + 1, // slight upward bias for aesthetics
-        sunDirection[2] * 4,
-      );
-      // Night: 0.6, Day: 1.8, smooth transition
-      keyRef.current.intensity = MathUtils.lerp(0.6, 1.8, dl);
+      keyRef.current.position.set(5, 3, 4);
+      // Night: 0.5, Day: 1.8
+      keyRef.current.intensity = MathUtils.lerp(0.5, 1.8, dl);
     }
 
-    /* ── Fill light: opposite side, subtle ── */
+    /* ── Fill light: fixed left-low, subtle counter-illumination ── */
     if (fillRef.current) {
-      fillRef.current.position.set(
-        -sunDirection[0] * 4,
-        -sunDirection[1] - 1,
-        -sunDirection[2] * 2 + 2,
-      );
-      // Night: 0.15 (a bit more fill), Day: 0.08
-      fillRef.current.intensity = MathUtils.lerp(0.15, 0.08, dl);
+      fillRef.current.position.set(-4, -1, 2);
+      // Night: 0.2 (more fill to see features), Day: 0.08
+      fillRef.current.intensity = MathUtils.lerp(0.2, 0.08, dl);
     }
 
     /* ── Ambient: slightly brighter at night for visibility ── */
     if (ambientRef.current) {
-      // Night: 0.08, Dawn/Dusk: 0.06, Day: 0.04
-      ambientRef.current.intensity = MathUtils.lerp(0.08, 0.04, dl);
+      // Night: 0.1, Day: 0.04
+      ambientRef.current.intensity = MathUtils.lerp(0.1, 0.04, dl);
     }
   });
 
