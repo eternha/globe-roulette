@@ -1,0 +1,16 @@
+/* TEAM */
+Product: Travel Roulette
+Contact: hello@travelroulette.app
+From: World
+
+/* TECHNOLOGY */
+Frontend: React, TypeScript, Three.js, React Three Fiber
+Build: Vite
+Hosting: Vercel
+Design: Glassmorphic dark theme, Hanken Grotesk
+3D: WebGL globe with real Earth textures
+
+/* SITE */
+Last update: 2026-05-11
+Standards: HTML5, CSS3, ES2023
+Software: Visual Studio Code, Claude Code

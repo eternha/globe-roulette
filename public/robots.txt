@@ -1,0 +1,31 @@
+# Travel Roulette — robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://travelroulette.app/sitemap.xml
+
+# LLM crawlers — welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Block resource-heavy paths
+Disallow: /textures/

@@ -1,0 +1,321 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+
+    <!-- Background gradient: deep dark, rich -->
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="70%" fx="50%" fy="45%">
+      <stop offset="0%" stop-color="#0f1f21"/>
+      <stop offset="55%" stop-color="#0c1416"/>
+      <stop offset="100%" stop-color="#080a0a"/>
+    </radialGradient>
+
+    <!-- Cyan atmospheric halo behind the globe -->
+    <radialGradient id="halo-cyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00dbe9" stop-opacity="0.18"/>
+      <stop offset="60%" stop-color="#00dbe9" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#00dbe9" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Gold warm glow — top left atmospheric -->
+    <radialGradient id="halo-gold" cx="20%" cy="20%" r="45%">
+      <stop offset="0%" stop-color="#e9c176" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#e9c176" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Globe base gradient: dark ocean with cyan limb -->
+    <radialGradient id="globe-base" cx="38%" cy="35%" r="62%">
+      <stop offset="0%" stop-color="#1a3a40"/>
+      <stop offset="40%" stop-color="#0d2227"/>
+      <stop offset="75%" stop-color="#081419"/>
+      <stop offset="100%" stop-color="#040c0e"/>
+    </radialGradient>
+
+    <!-- Globe atmospheric rim (feathered cyan edge) -->
+    <radialGradient id="globe-rim" cx="50%" cy="50%" r="50%">
+      <stop offset="72%" stop-color="transparent"/>
+      <stop offset="88%" stop-color="#00dbe9" stop-opacity="0.25"/>
+      <stop offset="96%" stop-color="#00dbe9" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#00dbe9" stop-opacity="0.15"/>
+    </radialGradient>
+
+    <!-- Specular highlight on globe top-left -->
+    <radialGradient id="globe-specular" cx="32%" cy="28%" r="38%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="55%" stop-color="#b0f0f5" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+
+    <!-- Clip path for globe circle -->
+    <clipPath id="globe-clip">
+      <circle cx="600" cy="315" r="198"/>
+    </clipPath>
+
+    <!-- Latitude / longitude grid pattern -->
+    <pattern id="grid-pattern" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M 44 0 L 0 0 0 44" fill="none" stroke="#00dbe9" stroke-width="0.4" stroke-opacity="0.18"/>
+    </pattern>
+
+    <!-- Subtle noise texture overlay -->
+    <filter id="noise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noisy"/>
+      <feColorMatrix type="saturate" values="0" in="noisy" result="grey"/>
+      <feComposite in="grey" in2="SourceGraphic" operator="in" result="masked"/>
+      <feBlend in="SourceGraphic" in2="masked" mode="screen" result="blended"/>
+      <feComponentTransfer in="blended">
+        <feFuncA type="linear" slope="0.035"/>
+      </feComponentTransfer>
+    </filter>
+
+    <!-- Soft blur for halo elements -->
+    <filter id="blur-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
+    <filter id="blur-tight" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="blur-xsoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="55"/>
+    </filter>
+
+    <!-- Glow filter for pin marker -->
+    <filter id="pin-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Text shadow / glow for title -->
+    <filter id="title-glow" x="-5%" y="-30%" width="110%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="16" result="blur"/>
+      <feFlood flood-color="#00dbe9" flood-opacity="0.35" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle vignette for depth -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="55%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.72"/>
+    </radialGradient>
+
+    <!-- Star field mask -->
+    <radialGradient id="stars-fade" cx="50%" cy="50%" r="50%">
+      <stop offset="30%" stop-color="white" stop-opacity="1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="stars-mask">
+      <rect width="1200" height="630" fill="url(#stars-fade)"/>
+    </mask>
+
+  </defs>
+
+  <!-- ── 1. Background ──────────────────────────────── -->
+  <rect width="1200" height="630" fill="url(#bg-glow)"/>
+
+  <!-- Gold warm atmospheric leak, top-left -->
+  <ellipse cx="220" cy="180" rx="320" ry="260" fill="url(#halo-gold)" filter="url(#blur-xsoft)"/>
+
+  <!-- ── 2. Star field ─────────────────────────────── -->
+  <!-- Generated manually: evenly scattered, varied radii and opacities -->
+  <g opacity="0.75">
+    <circle cx="58"  cy="42"  r="0.9" fill="white" fill-opacity="0.7"/>
+    <circle cx="145" cy="89"  r="0.6" fill="white" fill-opacity="0.5"/>
+    <circle cx="213" cy="28"  r="1.1" fill="white" fill-opacity="0.8"/>
+    <circle cx="310" cy="71"  r="0.7" fill="white" fill-opacity="0.6"/>
+    <circle cx="412" cy="19"  r="0.5" fill="white" fill-opacity="0.45"/>
+    <circle cx="490" cy="55"  r="0.8" fill="white" fill-opacity="0.65"/>
+    <circle cx="560" cy="30"  r="0.6" fill="white" fill-opacity="0.5"/>
+    <circle cx="680" cy="48"  r="1.0" fill="white" fill-opacity="0.7"/>
+    <circle cx="755" cy="18"  r="0.7" fill="white" fill-opacity="0.55"/>
+    <circle cx="830" cy="62"  r="0.5" fill="white" fill-opacity="0.45"/>
+    <circle cx="920" cy="35"  r="0.9" fill="white" fill-opacity="0.65"/>
+    <circle cx="1005" cy="80" r="0.6" fill="white" fill-opacity="0.5"/>
+    <circle cx="1090" cy="25" r="1.1" fill="white" fill-opacity="0.8"/>
+    <circle cx="1155" cy="70" r="0.7" fill="white" fill-opacity="0.6"/>
+    <!-- scattered across lower background, away from globe -->
+    <circle cx="42"  cy="190" r="0.6" fill="white" fill-opacity="0.45"/>
+    <circle cx="95"  cy="285" r="0.8" fill="white" fill-opacity="0.55"/>
+    <circle cx="30"  cy="390" r="0.5" fill="white" fill-opacity="0.4"/>
+    <circle cx="82"  cy="470" r="0.9" fill="white" fill-opacity="0.6"/>
+    <circle cx="145" cy="560" r="0.6" fill="white" fill-opacity="0.45"/>
+    <circle cx="220" cy="600" r="0.7" fill="white" fill-opacity="0.5"/>
+    <circle cx="1160" cy="180" r="0.8" fill="white" fill-opacity="0.6"/>
+    <circle cx="1140" cy="290" r="0.5" fill="white" fill-opacity="0.4"/>
+    <circle cx="1170" cy="400" r="0.7" fill="white" fill-opacity="0.55"/>
+    <circle cx="1135" cy="510" r="0.6" fill="white" fill-opacity="0.45"/>
+    <circle cx="1175" cy="590" r="0.9" fill="white" fill-opacity="0.65"/>
+    <!-- mid-left column -->
+    <circle cx="270" cy="155" r="0.5" fill="white" fill-opacity="0.4"/>
+    <circle cx="340" cy="540" r="0.7" fill="white" fill-opacity="0.5"/>
+    <circle cx="390" cy="590" r="0.5" fill="white" fill-opacity="0.38"/>
+    <circle cx="850" cy="580" r="0.6" fill="white" fill-opacity="0.45"/>
+    <circle cx="930" cy="560" r="0.8" fill="white" fill-opacity="0.55"/>
+    <circle cx="1010" cy="600" r="0.5" fill="white" fill-opacity="0.4"/>
+  </g>
+
+  <!-- ── 3. Globe atmospheric halo (large blurred disc) ── -->
+  <circle cx="600" cy="315" r="300" fill="url(#halo-cyan)" filter="url(#blur-soft)"/>
+
+  <!-- ── 4. Globe ──────────────────────────────────── -->
+
+  <!-- Globe shadow cast downward -->
+  <ellipse cx="600" cy="520" rx="155" ry="22" fill="#000000" fill-opacity="0.40" filter="url(#blur-tight)"/>
+
+  <!-- Globe base sphere -->
+  <circle cx="600" cy="315" r="198" fill="url(#globe-base)"/>
+
+  <!-- Lat/lon grid lines clipped to globe -->
+  <g clip-path="url(#globe-clip)">
+    <!-- Horizontal latitude lines -->
+    <line x1="402" y1="235" x2="798" y2="235" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="402" y1="275" x2="798" y2="275" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="402" y1="315" x2="798" y2="315" stroke="#00dbe9" stroke-width="0.7" stroke-opacity="0.30"/>
+    <line x1="402" y1="355" x2="798" y2="355" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="402" y1="395" x2="798" y2="395" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="402" y1="195" x2="798" y2="195" stroke="#00dbe9" stroke-width="0.4" stroke-opacity="0.15"/>
+    <line x1="402" y1="435" x2="798" y2="435" stroke="#00dbe9" stroke-width="0.4" stroke-opacity="0.15"/>
+    <!-- Vertical longitude lines (arcs approximated as straight for SVG clarity) -->
+    <line x1="520" y1="117" x2="520" y2="513" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="560" y1="117" x2="560" y2="513" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="600" y1="117" x2="600" y2="513" stroke="#00dbe9" stroke-width="0.7" stroke-opacity="0.30"/>
+    <line x1="640" y1="117" x2="640" y2="513" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="680" y1="117" x2="680" y2="513" stroke="#00dbe9" stroke-width="0.5" stroke-opacity="0.22"/>
+    <line x1="480" y1="117" x2="480" y2="513" stroke="#00dbe9" stroke-width="0.4" stroke-opacity="0.15"/>
+    <line x1="720" y1="117" x2="720" y2="513" stroke="#00dbe9" stroke-width="0.4" stroke-opacity="0.15"/>
+
+    <!-- Stylized continent shapes: minimalist ink blobs -->
+    <!-- North America -->
+    <path d="M 450 220 C 460 210, 490 205, 505 215 C 520 225, 530 240, 525 258
+             C 520 275, 500 285, 485 292 C 470 299, 452 290, 445 275
+             C 438 260, 440 230, 450 220 Z"
+          fill="#00dbe9" fill-opacity="0.13" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.30"/>
+    <!-- Europe / Africa -->
+    <path d="M 580 200 C 590 195, 605 198, 610 208 C 615 218, 610 235, 602 245
+             C 598 250, 590 252, 583 247 C 576 242, 574 228, 576 215 Z"
+          fill="#00dbe9" fill-opacity="0.10" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+    <path d="M 578 260 C 588 258, 605 260, 612 270 C 618 280, 616 300, 608 316
+             C 600 332, 583 340, 570 335 C 557 330, 552 316, 555 302
+             C 558 288, 568 262, 578 260 Z"
+          fill="#00dbe9" fill-opacity="0.10" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+    <!-- Asia blob -->
+    <path d="M 625 205 C 640 198, 670 200, 690 210 C 710 220, 720 240, 715 260
+             C 710 280, 692 295, 670 298 C 650 300, 630 292, 622 278
+             C 614 264, 614 245, 618 230 C 620 218, 622 208, 625 205 Z"
+          fill="#00dbe9" fill-opacity="0.11" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+    <!-- South America -->
+    <path d="M 495 315 C 505 308, 520 310, 528 320 C 536 330, 535 355, 528 372
+             C 521 389, 505 398, 493 393 C 480 388, 474 370, 475 352
+             C 476 334, 485 322, 495 315 Z"
+          fill="#00dbe9" fill-opacity="0.10" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+    <!-- Australia -->
+    <path d="M 695 345 C 710 340, 730 342, 738 352 C 746 362, 742 380, 730 388
+             C 718 396, 700 394, 692 384 C 684 374, 684 358, 695 345 Z"
+          fill="#00dbe9" fill-opacity="0.10" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+  </g>
+
+  <!-- Globe atmospheric rim glow -->
+  <circle cx="600" cy="315" r="198" fill="url(#globe-rim)"/>
+
+  <!-- Globe specular highlight -->
+  <circle cx="600" cy="315" r="198" fill="url(#globe-specular)"/>
+
+  <!-- Thin glowing ring at the equator -->
+  <ellipse cx="600" cy="315" rx="198" ry="20"
+           fill="none" stroke="#00dbe9" stroke-width="1.5" stroke-opacity="0.20"
+           clip-path="url(#globe-clip)"/>
+
+  <!-- Orbiting ring / orbit line (slight tilt) -->
+  <ellipse cx="600" cy="315" rx="248" ry="60"
+           fill="none" stroke="#00dbe9" stroke-width="1" stroke-opacity="0.22"
+           stroke-dasharray="12 6"
+           transform="rotate(-18, 600, 315)"/>
+
+  <!-- Orbit ring highlight arc (the visible front half, brighter) -->
+  <path d="M 358 280 A 248 60 0 0 1 842 280"
+        fill="none" stroke="#00dbe9" stroke-width="1.5" stroke-opacity="0.45"
+        transform="rotate(-18, 600, 315)"/>
+
+  <!-- Pin marker: gold dot on globe (top-right area) -->
+  <g filter="url(#pin-glow)" transform="translate(672, 245)">
+    <circle r="7" fill="#e9c176" fill-opacity="0.95"/>
+    <circle r="12" fill="#e9c176" fill-opacity="0.20"/>
+    <!-- Pin pulse ring -->
+    <circle r="18" fill="none" stroke="#e9c176" stroke-width="1.2" stroke-opacity="0.40"/>
+    <!-- Pin stem -->
+    <line x1="0" y1="7" x2="0" y2="22" stroke="#e9c176" stroke-width="1.5" stroke-opacity="0.70"/>
+  </g>
+
+  <!-- Second pin: cyan dot elsewhere on globe -->
+  <g filter="url(#pin-glow)" transform="translate(510, 355)">
+    <circle r="5" fill="#00dbe9" fill-opacity="0.90"/>
+    <circle r="9" fill="#00dbe9" fill-opacity="0.15"/>
+    <line x1="0" y1="5" x2="0" y2="16" stroke="#00dbe9" stroke-width="1.2" stroke-opacity="0.60"/>
+  </g>
+
+  <!-- Flight path arc between pins -->
+  <path d="M 510 355 C 530 300, 630 270, 672 245"
+        fill="none" stroke="#e9c176" stroke-width="1.2" stroke-opacity="0.45"
+        stroke-dasharray="6 4"/>
+
+  <!-- ── 5. Decorative horizontal rule lines ─────── -->
+  <!-- Left rule, tapering toward center -->
+  <line x1="80" y1="222" x2="370" y2="222" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+  <!-- Right rule -->
+  <line x1="830" y1="222" x2="1120" y2="222" stroke="#00dbe9" stroke-width="0.8" stroke-opacity="0.28"/>
+
+  <!-- ── 6. Typography ──────────────────────────── -->
+
+  <!-- Label above title: eyebrow -->
+  <text x="600" y="174"
+        font-family="'Hanken Grotesk', 'Inter', system-ui, sans-serif"
+        font-size="13"
+        font-weight="500"
+        letter-spacing="5"
+        fill="#00dbe9"
+        fill-opacity="0.75"
+        text-anchor="middle"
+        dominant-baseline="middle">DISCOVER THE WORLD</text>
+
+  <!-- Main title: TRAVEL ROULETTE -->
+  <text x="600" y="540"
+        font-family="'Hanken Grotesk', 'Inter', system-ui, sans-serif"
+        font-size="82"
+        font-weight="800"
+        letter-spacing="-1"
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        filter="url(#title-glow)">TRAVEL ROULETTE</text>
+
+  <!-- Tagline -->
+  <text x="600" y="594"
+        font-family="'Hanken Grotesk', 'Inter', system-ui, sans-serif"
+        font-size="18"
+        font-weight="400"
+        letter-spacing="1.5"
+        fill="#b9cacb"
+        fill-opacity="0.80"
+        text-anchor="middle"
+        dominant-baseline="middle">Spin the globe. Discover your next adventure.</text>
+
+  <!-- ── 7. Bottom accent: thin gold divider line ─ -->
+  <line x1="540" y1="614" x2="660" y2="614" stroke="#e9c176" stroke-width="1" stroke-opacity="0.40"/>
+
+  <!-- ── 8. Corner decorations: subtle bracket marks ── -->
+  <!-- Top-left -->
+  <path d="M 56 40 L 40 40 L 40 64" fill="none" stroke="#00dbe9" stroke-width="1.2" stroke-opacity="0.35"/>
+  <!-- Top-right -->
+  <path d="M 1144 40 L 1160 40 L 1160 64" fill="none" stroke="#00dbe9" stroke-width="1.2" stroke-opacity="0.35"/>
+  <!-- Bottom-left -->
+  <path d="M 56 590 L 40 590 L 40 566" fill="none" stroke="#00dbe9" stroke-width="1.2" stroke-opacity="0.35"/>
+  <!-- Bottom-right -->
+  <path d="M 1144 590 L 1160 590 L 1160 566" fill="none" stroke="#00dbe9" stroke-width="1.2" stroke-opacity="0.35"/>
+
+  <!-- ── 9. Vignette overlay ────────────────────── -->
+  <rect width="1200" height="630" fill="url(#vignette)"/>
+
+</svg>

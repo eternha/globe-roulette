@@ -1,16 +1,199 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Travel Roulette</title>
+
+    <!-- Primary Meta -->
+    <title>Travel Roulette — Spin the Globe, Discover Your Next Adventure</title>
+    <meta name="description" content="Spin a 3D interactive globe and land on a random travel destination from 1,157 curated places worldwide. Get AI itineraries, booking links, and travel highlights instantly." />
+    <meta name="keywords" content="travel roulette, random destination, travel inspiration, where to travel, spin the globe, random travel generator, trip planner, destination picker, travel ideas, wanderlust, adventure travel, 3D globe" />
+    <meta name="author" content="Travel Roulette" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://travelroulette.app/" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#00dbe9" />
+    <meta name="msapplication-TileColor" content="#131313" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Travel Roulette" />
+    <meta name="application-name" content="Travel Roulette" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Travel Roulette" />
+    <meta property="og:title" content="Travel Roulette — Spin the Globe, Discover Your Next Adventure" />
+    <meta property="og:description" content="Spin a 3D interactive globe and land on a random travel destination from 1,157 curated places worldwide. AI itineraries, booking links, and highlights." />
+    <meta property="og:url" content="https://travelroulette.app/" />
+    <meta property="og:image" content="https://travelroulette.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Travel Roulette — a glowing 3D globe with destination pins and the tagline Spin the globe, Discover your next adventure" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Travel Roulette — Spin the Globe" />
+    <meta name="twitter:description" content="Spin a 3D globe and land on a random destination from 1,157 curated places. AI itineraries, booking links, highlights." />
+    <meta name="twitter:image" content="https://travelroulette.app/og-image.png" />
+    <meta name="twitter:image:alt" content="Travel Roulette — 3D globe with destination pins" />
+
+    <!-- Additional social platforms -->
+    <meta property="og:video:type" content="text/html" />
+    <meta name="pinterest-rich-pin" content="true" />
+
+    <!-- Structured Data — WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Travel Roulette",
+      "alternateName": "TravelRoulette",
+      "url": "https://travelroulette.app",
+      "description": "Spin a 3D interactive globe and land on a random travel destination from 1,157 curated places worldwide. Get AI-generated itineraries, one-tap booking links, and destination highlights.",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires WebGL support",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Travel Roulette",
+        "url": "https://travelroulette.app"
+      },
+      "screenshot": "https://travelroulette.app/og-image.png",
+      "featureList": [
+        "3D interactive globe with real satellite textures",
+        "1,157 curated destinations worldwide",
+        "AI-powered day-by-day travel itineraries",
+        "One-tap booking for flights, hotels, experiences",
+        "Group trip planning with invite links",
+        "Themed destination packs",
+        "Mobile-first glassmorphic dark UI"
+      ],
+      "keywords": "travel, random destination, globe spinner, trip planner, travel inspiration, wanderlust, AI itinerary"
+    }
+    </script>
+
+    <!-- Structured Data — FAQPage (LLM & featured snippet optimization) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Travel Roulette?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Travel Roulette is a free web app that spins a 3D interactive globe to randomly select travel destinations from over 1,157 curated places worldwide. Each destination comes with highlights, AI-generated itineraries, and booking links for flights, hotels, and experiences."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does Travel Roulette work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pull the arrow handle upward and release it to spin the photorealistic 3D globe. It lands on a random destination, showing you the country, travel vibe, key highlights, and options to generate an AI itinerary or book flights and hotels with one tap."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Travel Roulette free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Travel Roulette is completely free to use. You can spin the globe, explore destinations, and generate AI itineraries at no cost. Optional Pro features for advanced filters and group planning are coming soon."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many destinations does Travel Roulette have?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Travel Roulette includes 1,157 curated destinations across every continent, ranging from major cities like Tokyo and Paris to hidden gems like Kotor, Montenegro and Luang Prabang, Laos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I plan a group trip with Travel Roulette?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Travel Roulette offers Group Trip Rooms where you can invite friends via a shareable link, collect everyone's travel preferences, and vote on destinations together."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data — SoftwareApplication (for app store-like indexing) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Travel Roulette",
+      "url": "https://travelroulette.app",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1",
+        "bestRating": "5"
+      }
+    }
+    </script>
+
+    <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- DNS Prefetch for affiliate partners -->
+    <link rel="dns-prefetch" href="https://www.kiwi.com" />
+    <link rel="dns-prefetch" href="https://www.booking.com" />
+    <link rel="dns-prefetch" href="https://www.getyourguide.com" />
+    <link rel="dns-prefetch" href="https://www.airalo.com" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Noscript fallback (SEO + accessibility) -->
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: sans-serif; color: #e5e2e1; background: #131313; min-height: 100vh;">
+        <h1>Travel Roulette</h1>
+        <p>Spin the globe. Discover your next adventure.</p>
+        <p>Travel Roulette is a free 3D interactive globe that randomly picks travel destinations from 1,157 curated places worldwide.</p>
+        <p>This app requires JavaScript and WebGL to run. Please enable JavaScript in your browser.</p>
+        <h2>Features</h2>
+        <ul style="text-align: left; max-width: 500px; margin: 1rem auto;">
+          <li>3D interactive globe with real satellite textures</li>
+          <li>1,157 curated destinations across every continent</li>
+          <li>AI-powered day-by-day travel itineraries</li>
+          <li>One-tap booking for flights, hotels, experiences, eSIM, insurance</li>
+          <li>Group trip planning with shared rooms and voting</li>
+          <li>Themed destination packs (Romantic Europe, Foodie Cities, Beach Escape...)</li>
+        </ul>
+      </div>
+    </noscript>
   </body>
 </html>

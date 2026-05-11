@@ -1,0 +1,62 @@
+# Travel Roulette
+
+> Spin the globe. Discover your next adventure.
+
+Travel Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from over 1,100 curated places worldwide. Users pull and release a handle to spin a photorealistic WebGL globe, which lands on a surprise destination complete with country info, travel highlights, booking links, and AI-generated itineraries.
+
+## What it does
+
+- Spins a 3D Earth globe rendered in WebGL with real satellite textures
+- Randomly selects from 1,157 curated destinations across every continent
+- Shows destination details: country, vibe, highlights, and why-visit reasons
+- Generates AI-powered day-by-day travel itineraries
+- Provides one-tap booking links for flights, hotels, experiences, eSIMs, insurance, and transfers
+- Supports group trip planning with shared rooms and voting
+- Works on mobile and desktop — no app download required
+
+## Who it's for
+
+- Travelers who don't know where to go next and want inspiration
+- Couples planning romantic getaways or honeymoons
+- Groups of friends deciding on a destination together
+- Digital nomads looking for remote-work-friendly cities
+- Solo travelers seeking adventure
+- Anyone who wants to break out of their travel comfort zone
+
+## Key features
+
+- **3D Interactive Globe**: Photorealistic Earth with clouds, lighting, and smooth spin animation
+- **1,157 Destinations**: Curated database covering cities, islands, villages, and hidden gems worldwide
+- **AI Itineraries**: Day-by-day trip plans customized by travel style (first-time visitor, foodie, adventure, relaxed, cultural) and duration (1-14 days)
+- **Smart Booking**: Affiliate links to Kiwi.com (flights), Booking.com (hotels), GetYourGuide (experiences), Airalo (eSIM), SafetyWing (insurance), Bookaway (transfers), DiscoverCars (car rental)
+- **Group Trip Rooms**: Invite friends, collect preferences, and vote on destinations together
+- **Destination Packs**: Themed roulette collections (Romantic Europe, Foodie Cities, Digital Nomad, Beach Escape, etc.)
+- **Highlight Details**: Tap any destination highlight to learn more — cultural sites, natural wonders, local cuisine, activities
+- **Shareable Results**: Share your random destination pick with friends via link or social media
+- **Mobile-First**: Designed for phones with glassmorphic dark UI, touch gestures, and safe-area support
+
+## How to use it
+
+1. Visit travelroulette.app
+2. Pull the arrow handle upward and release it
+3. Watch the 3D globe spin and land on a random destination
+4. Explore the destination card with highlights, booking links, and itinerary options
+5. Share your result or spin again
+
+## Technology
+
+Built with React, TypeScript, Three.js (React Three Fiber), and Vite. Hosted on Vercel. The 3D globe uses real NASA satellite imagery for day textures, cloud layers, normal maps, and specular maps. The UI uses a custom glassmorphic dark design system with Hanken Grotesk typography.
+
+## Comparisons
+
+- Unlike Google Flights Explore or Skyscanner Everywhere, Travel Roulette is purely random — no price or date filters. It's about serendipity, not deals.
+- Unlike Wanderlog or TripIt, it's not a trip planner — it's a destination discovery tool that can generate itineraries as a bonus.
+- Unlike spinning a physical globe, it includes curated data, booking integration, and AI itineraries for every destination.
+
+## URL
+
+https://travelroulette.app
+
+## Contact
+
+hello@travelroulette.app

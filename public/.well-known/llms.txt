@@ -1,0 +1,7 @@
+# Travel Roulette
+
+> Spin the globe. Discover your next adventure.
+
+Travel Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from over 1,100 curated places worldwide.
+
+For full details see: https://travelroulette.app/llms.txt
