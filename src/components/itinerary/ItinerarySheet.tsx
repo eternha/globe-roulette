@@ -3,6 +3,7 @@ import type { Destination } from "../../data/types";
 import type { ItineraryStyle, TravelItinerary, ItineraryOptions } from "../../types/itinerary";
 import { isItineraryFlagEnabled } from "../../config/features";
 import { isProUnlocked } from "../../lib/proAccess";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import {
   ITINERARY_STYLES,
   DURATION_OPTIONS,
@@ -34,6 +35,8 @@ export function ItinerarySheet({ destination, onClose }: ItinerarySheetProps) {
   const [duration, setDuration] = useState(3);
   const [style, setStyle] = useState<ItineraryStyle>("first_time");
   const [itinerary, setItinerary] = useState<TravelItinerary | null>(null);
+
+  const swipe = useSwipeToDismiss(onClose);
 
   /* ── Access check ─────────────────────────────────────────── */
 
@@ -102,12 +105,16 @@ export function ItinerarySheet({ destination, onClose }: ItinerarySheetProps) {
   return (
     <div className="itin-backdrop" onClick={handleBackdropClick}>
       <div
-        className="itin-sheet"
+        className={`itin-sheet${swipe.isDismissing ? " itin-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label="Generate itinerary"
+        style={{
+          transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
+          transition: swipe.isDragging ? "none" : undefined,
+        }}
       >
-        <div className="itin-handle">
+        <div className="itin-handle" {...swipe.handlers}>
           <div className="itin-handle-bar" />
         </div>
 

@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import type { LegalSection } from "./legal-copy";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import "./legal-modal.css";
 
 /* ── Types ──────────────────────────────────────────────────── */
@@ -21,6 +22,8 @@ export function LegalModal({
   sections,
   onClose,
 }: LegalModalProps) {
+  const swipe = useSwipeToDismiss(onClose);
+
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.target === e.currentTarget) onClose();
@@ -31,12 +34,16 @@ export function LegalModal({
   return (
     <div className="legal-backdrop" onClick={handleBackdropClick}>
       <div
-        className="legal-sheet"
+        className={`legal-sheet${swipe.isDismissing ? " legal-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        style={{
+          transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
+          transition: swipe.isDragging ? "none" : undefined,
+        }}
       >
-        <div className="legal-handle">
+        <div className="legal-handle" {...swipe.handlers}>
           <div className="legal-handle-bar" />
         </div>
 

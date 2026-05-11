@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { isGroupTripFlagEnabled } from "../../config/features";
 import { isProUnlocked } from "../../lib/proAccess";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import {
   GROUP_ROOM_DESCRIPTION,
   GROUP_ROOM_FEATURES,
@@ -34,6 +35,8 @@ interface GroupRoomSheetProps {
 export function GroupRoomSheet({ onClose }: GroupRoomSheetProps) {
   const [room, setRoom] = useState<TripRoom | null>(null);
   const [copied, setCopied] = useState(false);
+
+  const swipe = useSwipeToDismiss(onClose);
 
   /* ── Access check ────────────────────────────────────────── */
 
@@ -93,12 +96,16 @@ export function GroupRoomSheet({ onClose }: GroupRoomSheetProps) {
   return (
     <div className="grp-backdrop" onClick={handleBackdropClick}>
       <div
-        className="grp-sheet"
+        className={`grp-sheet${swipe.isDismissing ? " grp-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label="Group Trip Room"
+        style={{
+          transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
+          transition: swipe.isDragging ? "none" : undefined,
+        }}
       >
-        <div className="grp-handle">
+        <div className="grp-handle" {...swipe.handlers}>
           <div className="grp-handle-bar" />
         </div>
 

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import type { DestinationPack } from "../../types/destinationPack";
 import { getAllPacks } from "../../config/destinationPacks";
 import { trackDestinationPackSelected } from "../../lib/analytics";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import {
   IconGrid,
   IconHeart,
@@ -52,6 +53,7 @@ interface PackSheetProps {
 
 export function PackSheet({ onClose }: PackSheetProps) {
   const packs = getAllPacks();
+  const swipe = useSwipeToDismiss(onClose);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
@@ -65,12 +67,16 @@ export function PackSheet({ onClose }: PackSheetProps) {
   return (
     <div className="pack-backdrop" onClick={handleBackdropClick}>
       <div
-        className="pack-sheet"
+        className={`pack-sheet${swipe.isDismissing ? " pack-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label="Destination Packs"
+        style={{
+          transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
+          transition: swipe.isDragging ? "none" : undefined,
+        }}
       >
-        <div className="pack-handle">
+        <div className="pack-handle" {...swipe.handlers}>
           <div className="pack-handle-bar" />
         </div>
 

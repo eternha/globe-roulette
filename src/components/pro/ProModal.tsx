@@ -5,6 +5,7 @@ import {
   formatPrice,
   PRO_COMING_SOON,
 } from "../../config/pro";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import {
   trackProModalOpened,
   trackProModalClosed,
@@ -27,6 +28,8 @@ export function ProModal({ source, onClose }: ProModalProps) {
   const benefits = getProBenefits();
   const plans = getVisiblePlans();
   const primaryPlan = plans[0];
+
+  const swipe = useSwipeToDismiss(onClose);
 
   /* ── Analytics ────────────────────────────────────────────── */
 
@@ -57,12 +60,16 @@ export function ProModal({ source, onClose }: ProModalProps) {
   return (
     <div className="pro-backdrop" onClick={handleBackdropClick}>
       <div
-        className="pro-sheet"
+        className={`pro-sheet${swipe.isDismissing ? " pro-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label="Travel Roulette Pro"
+        style={{
+          transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
+          transition: swipe.isDragging ? "none" : undefined,
+        }}
       >
-        <div className="pro-handle">
+        <div className="pro-handle" {...swipe.handlers}>
           <div className="pro-handle-bar" />
         </div>
 
