@@ -3,6 +3,7 @@ import type { MachinePhase, Destination } from "../data/types";
 import { rouletteStore } from "../stores/rouletteStore";
 import { selectRandomDestination } from "../lib/selectDestination";
 import { lngToGlobeRotationY } from "../lib/geo";
+import { trackDestinationSelected } from "../lib/analytics";
 
 /* ── Configuration ───────────────────────────────────────── */
 
@@ -180,6 +181,11 @@ export function useRouletteMachine(): MachineReturn {
     /* ── pulling → launching ─────────────────────────────── */
     if (state.phase === "launching" && prev !== "launching") {
       if (state.selectedDestination) {
+        trackDestinationSelected(
+          state.selectedDestination.name,
+          state.selectedDestination.country,
+          state.selectedDestination.tier,
+        );
         const currentY = rouletteStore.getState().earthRotationY;
         const baseTarget = lngToGlobeRotationY(
           state.selectedDestination.lng,

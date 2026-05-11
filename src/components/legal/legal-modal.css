@@ -1,0 +1,214 @@
+/* ── Legal Modal — glassmorphic bottom sheet ─────────────── */
+
+.legal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: legal-backdrop-in 0.3s ease both;
+}
+
+@keyframes legal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Sheet ───────────────────────────────────────────────── */
+
+.legal-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+
+  background: linear-gradient(
+    168deg,
+    rgba(10, 22, 40, 0.92) 0%,
+    rgba(6, 14, 26, 0.96) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
+
+  border-top: 1px solid rgba(0, 219, 233, 0.12);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.5),
+    0 -2px 20px rgba(0, 219, 233, 0.06);
+
+  animation: legal-sheet-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes legal-sheet-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Handle ──────────────────────────────────────────────── */
+
+.legal-handle {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.legal-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Scrollable content ──────────────────────────────────── */
+
+.legal-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 4px var(--space-margin-edge, 20px) calc(env(safe-area-inset-bottom, 16px) + 24px);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.legal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.legal-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.legal-updated {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-outline);
+  white-space: nowrap;
+  padding-top: 6px;
+}
+
+/* ── Sections ────────────────────────────────────────────── */
+
+.legal-section {
+  margin-bottom: 20px;
+}
+
+.legal-section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section-heading {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  margin-bottom: 6px;
+}
+
+.legal-section-body {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--color-on-surface-variant);
+}
+
+/* ── Close button ────────────────────────────────────────── */
+
+.legal-close {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.legal-close-btn {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  background: rgba(0, 219, 233, 0.08);
+  border: 1px solid rgba(0, 219, 233, 0.15);
+  border-radius: 14px;
+  padding: 10px 32px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.legal-close-btn:hover {
+  background: rgba(0, 219, 233, 0.14);
+  border-color: rgba(0, 219, 233, 0.3);
+}
+
+/* ── Footer strip (always visible at bottom of screen) ──── */
+
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px calc(env(safe-area-inset-bottom, 4px) + 4px);
+  pointer-events: none;
+}
+
+.site-footer-link {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-outline);
+  opacity: 0.45;
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 4px 6px;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.site-footer-link:hover {
+  opacity: 0.8;
+}
+
+.site-footer-dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--color-outline);
+  opacity: 0.3;
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-backdrop,
+  .legal-sheet {
+    animation-duration: 0.01ms !important;
+  }
+}

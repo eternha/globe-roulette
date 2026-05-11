@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import type { Destination } from "../../data/types";
 import { getWhyNow } from "../../lib/whyNow";
 import {
@@ -7,6 +7,32 @@ import {
 } from "../../lib/savedDestinations";
 import { getHighlightDetail } from "../../data/highlightDetails";
 import type { HighlightDetail } from "../../data/highlightDetails";
+import {
+  getBookingActions,
+  openAffiliateLink,
+  shouldShowBookingSection,
+  shouldShowDisclosure,
+  AFFILIATE_DISCLOSURE,
+} from "../../lib/monetization";
+import type { BookingAction } from "../../lib/monetization";
+import {
+  trackDestinationCardViewed,
+  trackMonetizationActionsViewed,
+  trackProviderShown,
+  trackProTeaserClicked,
+  trackItineraryCtaViewed,
+  trackItineraryCtaClicked,
+} from "../../lib/analytics";
+import { isProFlagEnabled, isItineraryFlagEnabled, isGroupTripFlagEnabled, isPackFlagEnabled } from "../../config/features";
+import { isProUnlocked } from "../../lib/proAccess";
+import { ProTeaser } from "../pro/ProTeaser";
+import { ProModal } from "../pro/ProModal";
+import { ItinerarySheet } from "../itinerary/ItinerarySheet";
+import { GroupRoomTeaser } from "../group/GroupRoomTeaser";
+import { GroupRoomSheet } from "../group/GroupRoomSheet";
+import { PackTeaser } from "../packs/PackTeaser";
+import { PackSheet } from "../packs/PackSheet";
+import { CategoryIcon, IconRoute } from "../ui/Icons";
 import { HighlightSheet } from "./HighlightSheet";
 import "./result-card.css";
 import "./highlight-sheet.css";
@@ -71,6 +97,10 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
     isDestinationSaved(destination.id),
   );
   const [activeHighlight, setActiveHighlight] = useState<HighlightDetail | null>(null);
+  const [proModalOpen, setProModalOpen] = useState(false);
+  const [itinerarySheetOpen, setItinerarySheetOpen] = useState(false);
+  const [groupRoomSheetOpen, setGroupRoomSheetOpen] = useState(false);
+  const [packSheetOpen, setPackSheetOpen] = useState(false);
 
   /* ── Swipe-to-dismiss state ─────────────────────────────── */
   const [dragY, setDragY] = useState(0);
@@ -182,6 +212,78 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
 
   const whyNow = useMemo(() => getWhyNow(destination), [destination]);
   const highlights = destination.highlights.slice(0, MAX_HIGHLIGHTS);
+  const bookingActions = useMemo(() => getBookingActions(destination), [destination]);
+  const showBooking = shouldShowBookingSection() && bookingActions.length > 0;
+  const primaryActions = useMemo(
+    () => bookingActions.filter((a) => a.isPrimary),
+    [bookingActions],
+  );
+  const secondaryActions = useMemo(
+    () => bookingActions.filter((a) => !a.isPrimary),
+    [bookingActions],
+  );
+
+  const handleBookingClick = useCallback(
+    (action: BookingAction) => {
+      openAffiliateLink(action, destination.name);
+    },
+    [destination.name],
+  );
+
+  /* ── Pro teaser ───────────────────────────────────────────── */
+
+  const showProTeaser =
+    isProFlagEnabled("enable_pro_teaser") && !isProUnlocked();
+
+  const handleExplorePro = useCallback(() => {
+    trackProTeaserClicked(destination.name);
+    setProModalOpen(true);
+  }, [destination.name]);
+
+  /* ── Itinerary CTA ──────────────────────────────────────── */
+
+  const showItineraryCta = isItineraryFlagEnabled("enable_ai_itinerary");
+
+  const handleItineraryClick = useCallback(() => {
+    trackItineraryCtaClicked(destination.name);
+    setItinerarySheetOpen(true);
+  }, [destination.name]);
+
+  /* ── Group Trip Room teaser ───────────────────────────────── */
+
+  const showGroupTeaser = isGroupTripFlagEnabled("enable_group_rooms");
+
+  const handleGroupRoomOpen = useCallback(() => {
+    setGroupRoomSheetOpen(true);
+  }, []);
+
+  /* ── Destination pack teaser ─────────────────────────────── */
+
+  const showPackTeaser = isPackFlagEnabled("enable_pack_teaser");
+
+  const handlePackOpen = useCallback(() => {
+    setPackSheetOpen(true);
+  }, []);
+
+  /* ── Analytics: fire once when card mounts ─────────────── */
+
+  useEffect(() => {
+    trackDestinationCardViewed(destination.name, destination.country);
+  }, [destination.name, destination.country]);
+
+  useEffect(() => {
+    if (!showBooking) return;
+    trackMonetizationActionsViewed(destination.name);
+    for (const action of bookingActions) {
+      trackProviderShown(action.providerId, action.category, destination.name);
+    }
+  }, [showBooking, bookingActions, destination.name]);
+
+  useEffect(() => {
+    if (showItineraryCta) {
+      trackItineraryCtaViewed(destination.name);
+    }
+  }, [showItineraryCta, destination.name]);
 
   return (
     <>
@@ -276,6 +378,84 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
               </div>
             </div>
 
+            {/* Itinerary CTA */}
+            {showItineraryCta && (
+              <div className="itin-cta">
+                <button
+                  type="button"
+                  className="itin-cta-btn"
+                  onClick={handleItineraryClick}
+                >
+                  <IconRoute size={14} className="itin-cta-icon" />
+                  <span className="itin-cta-text">Generate itinerary</span>
+                </button>
+              </div>
+            )}
+
+            {/* Booking section — only renders when monetization is enabled */}
+            {showBooking && (
+              <div className="result-booking" aria-label="Book your trip">
+                <p className="result-booking-label">Book your trip</p>
+
+                {/* Primary CTAs: flights, hotels, experiences */}
+                <div className="result-booking-primary">
+                  {primaryActions.map((action) => (
+                    <button
+                      key={action.providerId}
+                      type="button"
+                      className="result-btn result-btn--affiliate"
+                      onClick={() => handleBookingClick(action)}
+                    >
+                      <CategoryIcon category={action.category} size={14} />
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Secondary: eSIM, insurance, transfers, car rental */}
+                {secondaryActions.length > 0 && (
+                  <div className="result-booking-secondary">
+                    {secondaryActions.map((action) => (
+                      <button
+                        key={action.providerId}
+                        type="button"
+                        className="result-btn result-btn--ghost result-btn--compact"
+                        onClick={() => handleBookingClick(action)}
+                      >
+                        <CategoryIcon category={action.category} size={13} />
+                        {action.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Affiliate disclosure */}
+                {shouldShowDisclosure() && (
+                  <p className="result-affiliate-disclosure">
+                    {AFFILIATE_DISCLOSURE}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Pro teaser — subtle, non-aggressive */}
+            {showProTeaser && (
+              <ProTeaser
+                destination={destination.name}
+                onExplorePro={handleExplorePro}
+              />
+            )}
+
+            {/* Group Trip Room teaser */}
+            {showGroupTeaser && (
+              <GroupRoomTeaser onOpen={handleGroupRoomOpen} />
+            )}
+
+            {/* Destination packs teaser */}
+            {showPackTeaser && (
+              <PackTeaser onOpen={handlePackOpen} />
+            )}
+
             {/* Actions */}
             <div className="result-actions">
               <button
@@ -325,6 +505,36 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
         <HighlightSheet
           detail={activeHighlight}
           onClose={() => setActiveHighlight(null)}
+        />
+      )}
+
+      {/* Pro modal */}
+      {proModalOpen && (
+        <ProModal
+          source="teaser"
+          onClose={() => setProModalOpen(false)}
+        />
+      )}
+
+      {/* Itinerary sheet */}
+      {itinerarySheetOpen && (
+        <ItinerarySheet
+          destination={destination}
+          onClose={() => setItinerarySheetOpen(false)}
+        />
+      )}
+
+      {/* Group Trip Room sheet */}
+      {groupRoomSheetOpen && (
+        <GroupRoomSheet
+          onClose={() => setGroupRoomSheetOpen(false)}
+        />
+      )}
+
+      {/* Destination packs sheet */}
+      {packSheetOpen && (
+        <PackSheet
+          onClose={() => setPackSheetOpen(false)}
         />
       )}
     </>

@@ -1,0 +1,593 @@
+/* ── Itinerary Sheet — glassmorphic bottom sheet ─────────── */
+
+.itin-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: itin-backdrop-in 0.3s ease both;
+}
+
+@keyframes itin-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.itin-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+
+  background: linear-gradient(
+    168deg,
+    rgba(10, 22, 40, 0.94) 0%,
+    rgba(6, 14, 26, 0.97) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
+
+  border-top: 1px solid rgba(0, 219, 233, 0.12);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.6),
+    0 -2px 20px rgba(0, 219, 233, 0.06);
+
+  animation: itin-sheet-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes itin-sheet-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.itin-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 219, 233, 0.4) 30%,
+    rgba(0, 219, 233, 0.6) 50%,
+    rgba(0, 219, 233, 0.4) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Handle ──────────────────────────────────────────────── */
+
+.itin-handle {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.itin-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Scroll ──────────────────────────────────────────────── */
+
+.itin-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 4px var(--space-margin-edge, 20px) calc(env(safe-area-inset-bottom, 16px) + 24px);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.itin-header {
+  text-align: center;
+  padding: 4px 0 16px;
+}
+
+.itin-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  background: rgba(0, 219, 233, 0.08);
+  border: 1px solid rgba(0, 219, 233, 0.15);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  margin-bottom: 12px;
+}
+
+.itin-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-on-surface);
+  margin: 0 0 4px;
+}
+
+.itin-subtitle {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+}
+
+/* ── Picker sections ─────────────────────────────────────── */
+
+.itin-picker-section {
+  padding: 12px 0;
+}
+
+.itin-picker-label {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+
+/* ── Duration pills ──────────────────────────────────────── */
+
+.itin-duration-row {
+  display: flex;
+  gap: 8px;
+}
+
+.itin-duration-pill {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itin-duration-pill:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.itin-duration-pill--active {
+  background: rgba(0, 219, 233, 0.1);
+  border-color: rgba(0, 219, 233, 0.25);
+  color: var(--color-surface-tint);
+}
+
+/* ── Style grid ──────────────────────────────────────────── */
+
+.itin-style-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.itin-style-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itin-style-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.itin-style-card--active {
+  background: rgba(0, 219, 233, 0.08);
+  border-color: rgba(0, 219, 233, 0.2);
+}
+
+.itin-style-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-surface-tint);
+  opacity: 0.4;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.itin-style-card--active .itin-style-dot {
+  opacity: 0.9;
+  box-shadow: 0 0 6px rgba(0, 219, 233, 0.4);
+}
+
+.itin-style-text {
+  min-width: 0;
+}
+
+.itin-style-name {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  line-height: 1.2;
+}
+
+.itin-style-desc {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-on-surface-variant);
+  opacity: 0.6;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Generate CTA ────────────────────────────────────────── */
+
+.itin-generate-cta {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 24px;
+  margin-top: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 219, 233, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.16) 0%,
+    rgba(0, 219, 233, 0.08) 100%
+  );
+  color: var(--color-surface-tint);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itin-generate-cta:active {
+  transform: scale(0.97);
+}
+
+.itin-generate-cta:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.24) 0%,
+    rgba(0, 219, 233, 0.12) 100%
+  );
+  border-color: rgba(0, 219, 233, 0.45);
+  box-shadow: 0 0 20px rgba(0, 219, 233, 0.1);
+}
+
+.itin-generate-cta:focus-visible {
+  outline: 2px solid var(--color-surface-tint);
+  outline-offset: 2px;
+}
+
+.itin-close-btn {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 24px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: none;
+  background: none;
+  color: var(--color-on-surface-variant);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itin-close-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Itinerary result view ───────────────────────────────── */
+
+.itin-result-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 0 12px;
+}
+
+.itin-result-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(0, 219, 233, 0.06);
+  border: 1px solid rgba(0, 219, 233, 0.12);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-surface-tint);
+}
+
+.itin-mock-badge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(233, 193, 118, 0.08);
+  border: 1px solid rgba(233, 193, 118, 0.12);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  opacity: 0.7;
+}
+
+/* ── Day cards ───────────────────────────────────────────── */
+
+.itin-day {
+  margin-bottom: 16px;
+}
+
+.itin-day:last-child {
+  margin-bottom: 0;
+}
+
+.itin-day-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.itin-day-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 219, 233, 0.1);
+  border: 1px solid rgba(0, 219, 233, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-surface-tint);
+  flex-shrink: 0;
+}
+
+.itin-day-theme {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.itin-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(0, 219, 233, 0.08);
+  margin-left: 13px;
+}
+
+.itin-item {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.itin-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.itin-item-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-surface-tint);
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.itin-item-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  flex: 1;
+}
+
+.itin-item-time {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.5;
+}
+
+.itin-item-desc {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+}
+
+.itin-item-tip {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(233, 193, 118, 0.04);
+  border: 1px solid rgba(233, 193, 118, 0.08);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-secondary);
+  opacity: 0.7;
+}
+
+.itin-item-tip::before {
+  content: "Tip: ";
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* ── Paywall overlay ─────────────────────────────────────── */
+
+.itin-paywall {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.itin-paywall-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  color: var(--color-surface-tint);
+  opacity: 0.6;
+}
+
+.itin-paywall-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  margin-bottom: 8px;
+}
+
+.itin-paywall-desc {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+  max-width: 280px;
+  margin: 0 auto 16px;
+}
+
+.itin-paywall-price {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+/* ── Result card CTA ─────────────────────────────────────── */
+
+.itin-cta {
+  padding: 10px 0 2px;
+  animation: content-fade 0.5s 0.46s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.itin-cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.06) 0%,
+    rgba(0, 219, 233, 0.02) 100%
+  );
+  border: 1px solid rgba(0, 219, 233, 0.1);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itin-cta-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.12) 0%,
+    rgba(0, 219, 233, 0.05) 100%
+  );
+  border-color: rgba(0, 219, 233, 0.2);
+}
+
+.itin-cta-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.itin-cta-text {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+}
+
+.itin-cta-pro-badge {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(233, 193, 118, 0.08);
+  border: 1px solid rgba(233, 193, 118, 0.12);
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .itin-backdrop,
+  .itin-sheet,
+  .itin-cta {
+    animation-duration: 0.01ms !important;
+  }
+}

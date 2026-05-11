@@ -313,6 +313,110 @@
   flex-shrink: 0;
 }
 
+/* ── Booking section ─────────────────────────────────────── */
+
+.result-booking {
+  padding: 12px 0 4px;
+  animation: content-fade 0.5s 0.44s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.result-booking-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+
+.result-booking-primary {
+  display: flex;
+  gap: 8px;
+}
+
+.result-booking-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Affiliate CTA — warm gradient variant */
+.result-btn--affiliate {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 12px 6px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.12) 0%,
+    rgba(0, 219, 233, 0.06) 100%
+  );
+  border: 1px solid rgba(0, 219, 233, 0.2);
+  color: var(--color-surface-tint);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-btn--affiliate:active {
+  transform: scale(0.96);
+}
+
+.result-btn--affiliate:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.2) 0%,
+    rgba(0, 219, 233, 0.1) 100%
+  );
+  border-color: rgba(0, 219, 233, 0.35);
+  box-shadow: 0 0 14px rgba(0, 219, 233, 0.1);
+}
+
+.result-btn--affiliate:focus-visible {
+  outline: 2px solid var(--color-surface-tint);
+  outline-offset: 2px;
+}
+
+/* Compact ghost for secondary actions */
+.result-btn--compact {
+  flex: 0 1 auto;
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 10px;
+  border-radius: 10px;
+}
+
+/* SVG icons inside affiliate buttons */
+.result-btn--affiliate svg,
+.result-btn--compact svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Affiliate disclosure */
+.result-affiliate-disclosure {
+  margin-top: 10px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
+  opacity: 0.45;
+  text-align: center;
+}
+
 /* ── Action buttons ──────────────────────────────────────── */
 
 .result-actions {

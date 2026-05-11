@@ -5,6 +5,7 @@ import { GlobeScene } from "./components/globe/GlobeScene";
 import { PullArrow } from "./components/arrow/PullArrow";
 import { ResultCard } from "./components/result/ResultCard";
 import { SavedPanel } from "./components/saved/SavedPanel";
+import { SiteFooter } from "./components/legal/SiteFooter";
 import { useRouletteMachine } from "./hooks/useRouletteMachine";
 import { usePullGesture } from "./hooks/usePullGesture";
 
@@ -268,6 +269,9 @@ export default function App() {
           onSelectDestination={handleGoToDestination}
         />
       )}
+
+      {/* Site footer — privacy, terms, disclosure */}
+      <SiteFooter />
     </>
   );
 }

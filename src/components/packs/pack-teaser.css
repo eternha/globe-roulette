@@ -1,0 +1,341 @@
+/* ── Pack teaser — subtle "coming soon" strip ────────────── */
+
+.pack-teaser {
+  padding: 6px 0 2px;
+  animation: pack-fade 0.5s 0.56s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pack-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pack-teaser-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.05) 0%,
+    rgba(0, 219, 233, 0.015) 100%
+  );
+  border: 1px solid rgba(0, 219, 233, 0.08);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pack-teaser-inner:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.1) 0%,
+    rgba(0, 219, 233, 0.03) 100%
+  );
+  border-color: rgba(0, 219, 233, 0.18);
+}
+
+.pack-teaser-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--color-surface-tint);
+}
+
+.pack-teaser-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pack-teaser-copy {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+}
+
+.pack-teaser-cta {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  margin-top: 3px;
+}
+
+.pack-teaser-chevron {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--color-surface-tint);
+}
+
+/* ── Pack sheet — glassmorphic bottom sheet ───────────────── */
+
+.pack-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: pack-backdrop-in 0.3s ease both;
+}
+
+@keyframes pack-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.pack-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+
+  background: linear-gradient(
+    168deg,
+    rgba(10, 22, 40, 0.94) 0%,
+    rgba(6, 14, 26, 0.97) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
+
+  border-top: 1px solid rgba(0, 219, 233, 0.12);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.6),
+    0 -2px 20px rgba(0, 219, 233, 0.05);
+
+  animation: pack-sheet-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pack-sheet-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.pack-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 219, 233, 0.35) 30%,
+    rgba(0, 219, 233, 0.55) 50%,
+    rgba(0, 219, 233, 0.35) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Handle ──────────────────────────────────────────────── */
+
+.pack-handle {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+
+.pack-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Scrollable content ──────────────────────────────────── */
+
+.pack-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 4px var(--space-margin-edge, 20px) calc(env(safe-area-inset-bottom, 16px) + 24px);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.pack-header {
+  text-align: center;
+  padding: 8px 0 20px;
+}
+
+.pack-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.1) 0%,
+    rgba(0, 219, 233, 0.04) 100%
+  );
+  border: 1px solid rgba(0, 219, 233, 0.18);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  margin-bottom: 16px;
+}
+
+.pack-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-on-surface);
+  line-height: 1.15;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.pack-subtitle {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-on-surface-variant);
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+/* ── Pack list ──────────────────────────────────────────── */
+
+.pack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 0;
+}
+
+.pack-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: default;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.pack-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.pack-card--premium {
+  border-color: rgba(233, 193, 118, 0.08);
+}
+
+.pack-card--premium:hover {
+  border-color: rgba(233, 193, 118, 0.15);
+}
+
+.pack-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: rgba(0, 219, 233, 0.06);
+  border: 1px solid rgba(0, 219, 233, 0.08);
+  color: var(--color-surface-tint);
+}
+
+.pack-card--premium .pack-card-icon {
+  background: rgba(233, 193, 118, 0.06);
+  border-color: rgba(233, 193, 118, 0.1);
+  color: var(--color-secondary);
+}
+
+.pack-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pack-card-name {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  line-height: 1.3;
+  margin: 0 0 2px;
+}
+
+.pack-card-desc {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-on-surface-variant);
+  opacity: 0.55;
+  line-height: 1.4;
+}
+
+.pack-card-premium {
+  flex-shrink: 0;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(233, 193, 118, 0.08);
+  border: 1px solid rgba(233, 193, 118, 0.12);
+  align-self: center;
+}
+
+/* ── Close CTA ───────────────────────────────────────────── */
+
+.pack-close-btn {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  background: none;
+  color: var(--color-on-surface-variant);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  margin-top: 8px;
+}
+
+.pack-close-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-backdrop,
+  .pack-sheet,
+  .pack-teaser {
+    animation-duration: 0.01ms !important;
+  }
+}
