@@ -189,14 +189,19 @@
 }
 
 .itin-style-card {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 14px;
+  min-height: 64px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
   cursor: pointer;
+  text-align: center;
   transition: background 0.15s, border-color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -212,13 +217,14 @@
 }
 
 .itin-style-dot {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--color-surface-tint);
-  opacity: 0.4;
-  flex-shrink: 0;
-  margin-top: 6px;
+  opacity: 0.35;
 }
 
 .itin-style-card--active .itin-style-dot {
@@ -227,15 +233,17 @@
 }
 
 .itin-style-text {
+  width: 100%;
   min-width: 0;
 }
 
 .itin-style-name {
   font-family: "Hanken Grotesk", sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-on-surface);
-  line-height: 1.2;
+  line-height: 1.25;
+  margin: 0;
 }
 
 .itin-style-desc {
@@ -244,10 +252,10 @@
   font-weight: 400;
   color: var(--color-on-surface-variant);
   opacity: 0.6;
-  line-height: 1.3;
-  white-space: nowrap;
+  line-height: 1.35;
+  margin: 2px 0 0;
+  /* Allow wrap on narrow screens; ellipsis only as fallback */
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* ── Generate CTA ────────────────────────────────────────── */
@@ -580,6 +588,22 @@
   border-radius: 6px;
   background: rgba(233, 193, 118, 0.08);
   border: 1px solid rgba(233, 193, 118, 0.12);
+}
+
+/* ── Narrow phones: collapse 2-col style grid to 1 col ───── */
+
+@media (max-width: 379px) {
+  .itin-style-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .itin-duration-row {
+    flex-wrap: wrap;
+  }
+
+  .itin-duration-pill {
+    flex: 1 0 calc(50% - 4px);
+  }
 }
 
 /* ── Reduced motion ──────────────────────────────────────── */
