@@ -5,7 +5,11 @@ import {
   isDestinationSaved,
   toggleSavedDestination,
 } from "../../lib/savedDestinations";
+import { getHighlightDetail } from "../../data/highlightDetails";
+import type { HighlightDetail } from "../../data/highlightDetails";
+import { HighlightSheet } from "./HighlightSheet";
 import "./result-card.css";
+import "./highlight-sheet.css";
 
 /** Maximum highlights shown on the card to keep it uncluttered. */
 const MAX_HIGHLIGHTS = 3;
@@ -66,6 +70,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
   const [saved, setSaved] = useState(() =>
     isDestinationSaved(destination.id),
   );
+  const [activeHighlight, setActiveHighlight] = useState<HighlightDetail | null>(null);
 
   /* ── Swipe-to-dismiss state ─────────────────────────────── */
   const [dragY, setDragY] = useState(0);
@@ -243,12 +248,31 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
             <div className="result-highlights">
               <p className="result-highlights-label">Highlights</p>
               <div className="result-highlights-list">
-                {highlights.map((h, i) => (
-                  <span key={`${h}-${i}`} className="result-highlight-tag">
-                    <span className="result-highlight-dot" />
-                    {h}
-                  </span>
-                ))}
+                {highlights.map((h, i) => {
+                  const detail = getHighlightDetail(h);
+                  if (detail) {
+                    return (
+                      <button
+                        key={`${h}-${i}`}
+                        type="button"
+                        className="result-highlight-tag result-highlight-tag--clickable"
+                        onClick={() => setActiveHighlight(detail)}
+                      >
+                        <span className="result-highlight-dot" />
+                        {h}
+                        <svg className="result-highlight-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 4l4 4-4 4" />
+                        </svg>
+                      </button>
+                    );
+                  }
+                  return (
+                    <span key={`${h}-${i}`} className="result-highlight-tag">
+                      <span className="result-highlight-dot" />
+                      {h}
+                    </span>
+                  );
+                })}
               </div>
             </div>
 
@@ -294,6 +318,14 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
         >
           {toast.message}
         </div>
+      )}
+
+      {/* Highlight detail sheet */}
+      {activeHighlight && (
+        <HighlightSheet
+          detail={activeHighlight}
+          onClose={() => setActiveHighlight(null)}
+        />
       )}
     </>
   );

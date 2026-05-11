@@ -1,0 +1,618 @@
+/* ── Highlight Detail Sheet — glassmorphic overlay ────────── */
+
+.hl-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.55);
+  animation: hl-backdrop-in 0.35s ease-out both;
+}
+
+@keyframes hl-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Sheet container ─────────────────────────────────────── */
+
+.hl-sheet {
+  position: relative;
+  pointer-events: auto;
+
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+
+  background: linear-gradient(
+    168deg,
+    rgba(8, 18, 34, 0.94) 0%,
+    rgba(4, 12, 24, 0.97) 50%,
+    rgba(2, 8, 18, 0.98) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
+
+  border-top: 1px solid rgba(0, 219, 233, 0.12);
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    0 -8px 40px rgba(0, 0, 0, 0.6),
+    0 -2px 20px rgba(0, 219, 233, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  animation: hl-sheet-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hl-sheet--dismissing {
+  animation: hl-sheet-dismiss 0.35s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}
+
+@keyframes hl-sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hl-sheet-dismiss {
+  from {
+    opacity: 1;
+    transform: translateY(var(--drag-y, 0));
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* Top glow line */
+.hl-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 219, 233, 0.35) 30%,
+    rgba(0, 219, 233, 0.55) 50%,
+    rgba(0, 219, 233, 0.35) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Drag handle ─────────────────────────────────────────── */
+
+.hl-handle {
+  display: flex;
+  justify-content: center;
+  padding: 14px 0 6px;
+  flex-shrink: 0;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hl-handle:active {
+  cursor: grabbing;
+}
+
+.hl-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s;
+}
+
+.hl-handle:hover .hl-handle-bar {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Scrollable content ──────────────────────────────────── */
+
+.hl-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 24px);
+}
+
+/* ── Top bar — back button ───────────────────────────────── */
+
+.hl-top-bar {
+  display: flex;
+  align-items: center;
+  padding: 4px 16px 8px;
+}
+
+.hl-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px 6px 6px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-surface-tint, rgba(0, 219, 233, 0.9));
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hl-back-btn:active {
+  transform: scale(0.95);
+}
+
+.hl-back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hl-back-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Text-only header (no hero image) ────────────────────── */
+
+.hl-text-header {
+  padding: 8px 20px 4px;
+}
+
+.hl-text-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-primary, rgba(0, 219, 233, 1));
+  line-height: 1.15;
+  text-shadow: 0 0 20px rgba(0, 219, 233, 0.15);
+}
+
+/* ── Hero image ──────────────────────────────────────────── */
+
+.hl-hero-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.hl-hero-placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.04) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  animation: hl-shimmer 1.6s ease-in-out infinite alternate;
+}
+
+.hl-hero-placeholder--hidden {
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+@keyframes hl-shimmer {
+  from { opacity: 0.4; }
+  to   { opacity: 0.8; }
+}
+
+.hl-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.hl-hero-img--loaded {
+  opacity: 1;
+}
+
+.hl-hero-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(
+    to top,
+    rgba(4, 12, 24, 0.95) 0%,
+    rgba(4, 12, 24, 0.6) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.hl-hero-title-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+}
+
+.hl-hero-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.hl-hero-credit {
+  margin: 4px 0 0;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.03em;
+}
+
+/* ── Description ─────────────────────────────────────────── */
+
+.hl-description {
+  padding: 20px 20px 16px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--color-on-surface, rgba(255, 255, 255, 0.88));
+  opacity: 0.88;
+}
+
+/* ── Section label ───────────────────────────────────────── */
+
+.hl-section-label {
+  margin: 0 0 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint, rgba(0, 219, 233, 0.9));
+  opacity: 0.65;
+}
+
+/* ── Facts grid ──────────────────────────────────────────── */
+
+.hl-facts {
+  padding: 0 20px 16px;
+}
+
+.hl-facts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.hl-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hl-fact-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint, rgba(0, 219, 233, 0.9));
+  opacity: 0.6;
+}
+
+.hl-fact-value {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-on-surface, rgba(255, 255, 255, 0.88));
+  opacity: 0.85;
+}
+
+/* ── Gallery ─────────────────────────────────────────────── */
+
+.hl-gallery-section {
+  padding: 0 20px 16px;
+}
+
+.hl-gallery-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hl-gallery-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.hl-gallery-item {
+  flex-shrink: 0;
+  position: relative;
+  width: 180px;
+  height: 120px;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 0.15s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.hl-gallery-item:active {
+  transform: scale(0.97);
+}
+
+.hl-gallery-item:hover {
+  box-shadow: 0 0 0 1px rgba(0, 219, 233, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hl-gallery-placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 219, 233, 0.04) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  animation: hl-shimmer 1.6s ease-in-out infinite alternate;
+}
+
+.hl-gallery-placeholder--hidden {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hl-gallery-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+
+.hl-gallery-img--loaded {
+  opacity: 1;
+}
+
+.hl-gallery-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 11px;
+}
+
+/* ── External link button ────────────────────────────────── */
+
+.hl-external-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 20px 0;
+  padding: 10px 18px;
+  border: 1px solid rgba(0, 219, 233, 0.18);
+  border-radius: 12px;
+  background: rgba(0, 219, 233, 0.06);
+  color: var(--color-surface-tint, rgba(0, 219, 233, 0.9));
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hl-external-btn:active {
+  transform: scale(0.97);
+}
+
+.hl-external-btn:hover {
+  background: rgba(0, 219, 233, 0.12);
+  border-color: rgba(0, 219, 233, 0.3);
+}
+
+.hl-external-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Lightbox ────────────────────────────────────────────── */
+
+.hl-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.88);
+  animation: hl-lightbox-in 0.25s ease-out both;
+  padding: 24px;
+}
+
+@keyframes hl-lightbox-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.hl-lightbox-content {
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hl-lightbox-img {
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.hl-lightbox-caption {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.hl-lightbox-credit {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.hl-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hl-lightbox-close:active {
+  transform: scale(0.92);
+}
+
+.hl-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Clickable highlight tag (in ResultCard) ─────────────── */
+
+.result-highlight-tag--clickable {
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.result-highlight-tag--clickable:active {
+  transform: scale(0.95);
+}
+
+.result-highlight-tag--clickable:hover {
+  background: rgba(0, 219, 233, 0.06);
+  border-color: rgba(0, 219, 233, 0.15);
+}
+
+/* Small chevron hint for clickable tags */
+.result-highlight-chevron {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  opacity: 0.4;
+  color: var(--color-surface-tint, rgba(0, 219, 233, 0.9));
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .hl-sheet,
+  .hl-backdrop,
+  .hl-lightbox {
+    animation-duration: 0.01ms;
+  }
+
+  .hl-hero-placeholder,
+  .hl-gallery-placeholder {
+    animation: none;
+  }
+}
+
+/* ── Desktop — wider sheet ───────────────────────────────── */
+
+@media (min-width: 640px) {
+  .hl-sheet {
+    max-width: 520px;
+    margin: 0 auto;
+    border-radius: 28px 28px 0 0;
+  }
+
+  .hl-gallery-item {
+    width: 220px;
+    height: 140px;
+  }
+
+  .hl-hero-title {
+    font-size: 30px;
+  }
+}
+
+/* ── Short phones ────────────────────────────────────────── */
+
+@media (max-height: 700px) {
+  .hl-sheet {
+    max-height: 82vh;
+  }
+
+  .hl-hero-wrapper {
+    aspect-ratio: 2 / 1;
+  }
+
+  .hl-description {
+    padding: 14px 20px 12px;
+    font-size: 13px;
+  }
+
+  .hl-hero-title {
+    font-size: 22px;
+  }
+}

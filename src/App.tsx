@@ -16,7 +16,6 @@ export default function App() {
   const deepLinkHandled = useRef(false);
   useEffect(() => {
     if (deepLinkHandled.current) return;
-    deepLinkHandled.current = true;
 
     const params = new URLSearchParams(window.location.search);
     const destId = params.get("dest");
@@ -25,13 +24,14 @@ export default function App() {
     const dest = destinations.find((d) => d.id === destId);
     if (!dest) return;
 
-    /* Small delay so the globe has time to initialize before navigating */
+    /* Mark handled INSIDE the timeout so React strict-mode
+       double-invoke doesn't clear the timer before it fires. */
     const timer = window.setTimeout(() => {
+      deepLinkHandled.current = true;
       send({ type: "GOTO_DESTINATION", destination: dest });
+      /* Clean the URL so refreshing doesn't re-trigger */
+      window.history.replaceState({}, "", window.location.pathname);
     }, 800);
-
-    /* Clean the URL so refreshing doesn't re-trigger */
-    window.history.replaceState({}, "", window.location.pathname);
 
     return () => clearTimeout(timer);
   }, [send]);
