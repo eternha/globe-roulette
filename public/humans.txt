@@ -1,6 +1,6 @@
 /* TEAM */
 Product: Travel Roulette
-Contact: hello@travelroulette.app
+Site: https://travel-roulette-eight.vercel.app
 From: World
 
 /* TECHNOLOGY */

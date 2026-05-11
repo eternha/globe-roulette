@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://travelroulette.app/sitemap.xml
+Sitemap: https://travel-roulette-eight.vercel.app/sitemap.xml
 
 # LLM crawlers — welcome
 User-agent: GPTBot
