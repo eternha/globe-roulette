@@ -1,8 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Points as PointsType, ShaderMaterial } from "three";
-import { AdditiveBlending, MathUtils } from "three";
-import { rouletteStore } from "../../stores/rouletteStore";
+import { AdditiveBlending } from "three";
 
 /**
  * Reduce star count on mobile for GPU performance.
@@ -95,13 +94,11 @@ export function SpaceBackground() {
 
   const { positions, sizes, phases, temps } = STAR_DATA;
 
-  const currentBrightness = useRef(1);
-
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
-      uBrightness: { value: 1 },
+      uBrightness: { value: 0.7 },
     }),
     [],
   );
@@ -112,18 +109,6 @@ export function SpaceBackground() {
     }
     if (matRef.current) {
       matRef.current.uniforms.uTime.value += delta;
-
-      /* Stars are brightest at night, dimmer during day */
-      const dl = rouletteStore.getState().daylightFactor;
-      // Night (dl=0) → brightness 1.0, Day (dl=1) → brightness 0.35
-      const targetBright = MathUtils.lerp(1.0, 0.35, dl);
-      const alpha = 1 - Math.exp(-1.5 * delta);
-      currentBrightness.current = MathUtils.lerp(
-        currentBrightness.current,
-        targetBright,
-        alpha,
-      );
-      matRef.current.uniforms.uBrightness.value = currentBrightness.current;
     }
   });
 

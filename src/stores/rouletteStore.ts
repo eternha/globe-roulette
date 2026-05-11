@@ -26,10 +26,6 @@ interface RouletteState {
    * The Earth steers toward this value during the final portion of launch.
    */
   targetRotationY: number | null;
-  /** Real-time sun direction vector [x, y, z] based on device clock */
-  sunDirection: [number, number, number];
-  /** 0–1 daylight factor for the viewer's location (drives ambient brightness) */
-  daylightFactor: number;
 }
 
 const state: RouletteState = {
@@ -41,8 +37,6 @@ const state: RouletteState = {
   selectedDestination: null,
   earthRotationY: 0,
   targetRotationY: null,
-  sunDirection: [0.8, 0.4, 0.5],
-  daylightFactor: 0.5,
 };
 
 export const rouletteStore = {
@@ -80,14 +74,6 @@ export const rouletteStore = {
 
   setTargetRotationY(radians: number | null): void {
     state.targetRotationY = radians;
-  },
-
-  setSunDirection(dir: [number, number, number]): void {
-    state.sunDirection = dir;
-  },
-
-  setDaylightFactor(factor: number): void {
-    state.daylightFactor = factor;
   },
 
   /** Reset all transient state back to idle defaults */
