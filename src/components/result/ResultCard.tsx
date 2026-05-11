@@ -180,19 +180,24 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
   const handleShare = useCallback(async () => {
     const shareUrl = `${window.location.origin}${window.location.pathname}?dest=${encodeURIComponent(destination.id)}`;
 
-    const shareText = [
+    /* Body WITHOUT the URL — Web Share API receivers (WhatsApp, etc.)
+       concatenate `text` + `url`, so embedding the URL here would
+       duplicate it. */
+    const shareBody = [
       `${destination.name}, ${destination.country}`,
       destination.shortDescription,
       "",
       `Travel Roulette chose our next trip ✈`,
-      shareUrl,
     ].join("\n");
+
+    /* Clipboard fallback DOES include the URL as a single string. */
+    const clipboardText = `${shareBody}\n${shareUrl}`;
 
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({
           title: `${destination.name} — Travel Roulette`,
-          text: shareText,
+          text: shareBody,
           url: shareUrl,
         });
         showToast("Shared successfully");
@@ -203,7 +208,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
     }
 
     try {
-      await navigator.clipboard.writeText(shareText);
+      await navigator.clipboard.writeText(clipboardText);
       showToast("Copied to clipboard");
     } catch {
       showToast("Could not copy");
