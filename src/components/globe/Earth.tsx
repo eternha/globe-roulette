@@ -54,6 +54,11 @@ const fragmentShader = /* glsl */ `
   varying vec3 vViewDir;
 
   void main() {
+    /* ── Transform sun direction to view space ────────────
+     *  vNormal is in view space (via normalMatrix), so uSunDir
+     *  must also be in view space for correct NdotL.        ── */
+    vec3 sunDir = normalize((viewMatrix * vec4(uSunDir, 0.0)).xyz);
+
     /* ── Sample textures ────────────────────────────────── */
     vec3 dayColor = texture2D(uDayMap, vUv).rgb;
     vec3 nightColor = texture2D(uNightMap, vUv).rgb;
@@ -72,11 +77,11 @@ const fragmentShader = /* glsl */ `
                    (hU - hD) * cross(vec3(1.0, 0.0, 0.0), vNormal)));
 
     /* ── Diffuse lighting ───────────────────────────────── */
-    float NdotL = dot(bumpNormal, uSunDir);
+    float NdotL = dot(bumpNormal, sunDir);
     float diffuse = max(NdotL, 0.0);
 
     /* ── Specular (Blinn-Phong) — oceans only ───────────── */
-    vec3 halfDir = normalize(uSunDir + vViewDir);
+    vec3 halfDir = normalize(sunDir + vViewDir);
     float spec = pow(max(dot(bumpNormal, halfDir), 0.0), 80.0);
     spec *= specMask * diffuse;
 

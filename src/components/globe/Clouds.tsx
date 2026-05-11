@@ -39,8 +39,11 @@ const fragmentShader = /* glsl */ `
     /* Threshold to sharpen cloud edges slightly */
     cloudAlpha = smoothstep(0.15, 0.7, cloudAlpha);
 
+    /* Transform sun direction to view space (vNormal is in view space) */
+    vec3 sunDir = normalize((viewMatrix * vec4(uSunDir, 0.0)).xyz);
+
     /* Diffuse lighting on clouds */
-    float NdotL = dot(vNormal, uSunDir);
+    float NdotL = dot(vNormal, sunDir);
     float diffuse = max(NdotL, 0.0);
     float ambient = 0.15;
 
