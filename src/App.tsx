@@ -182,30 +182,10 @@ export default function App() {
             <button
               type="button"
               onClick={handleReveal}
-              style={{
-                pointerEvents: "auto",
-                background: "none",
-                border: "none",
-                padding: "20px 40px",
-                cursor: "pointer",
-                WebkitTapHighlightColor: "transparent",
-                animation: "tap-hint-pulse 2s ease-in-out infinite",
-              }}
+              className="tap-hint-btn"
             >
-              <p
-                style={{
-                  fontFamily: "'Hanken Grotesk', sans-serif",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  letterSpacing: "0.25em",
-                  textTransform: "uppercase",
-                  color: "var(--color-surface-tint)",
-                  opacity: 0.9,
-                  textShadow: "0 0 20px rgba(0, 219, 233, 0.4)",
-                }}
-              >
-                Tap to discover
-              </p>
+              <span className="tap-hint-btn__dot" aria-hidden="true" />
+              <span className="tap-hint-btn__label">Tap to discover</span>
             </button>
           )}
 

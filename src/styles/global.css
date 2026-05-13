@@ -35,8 +35,58 @@ canvas {
 }
 
 @keyframes tap-hint-pulse {
-  0%, 100% { opacity: 0.9; transform: scale(1); }
-  50%      { opacity: 1; transform: scale(1.05); }
+  0%, 100% {
+    opacity: 0.88;
+    transform: scale(1);
+    box-shadow:
+      0 4px 28px rgba(0, 0, 0, 0.3),
+      0 0 0 0 rgba(0, 219, 233, 0),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+    box-shadow:
+      0 4px 28px rgba(0, 0, 0, 0.3),
+      0 0 18px 3px rgba(0, 219, 233, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* Glassmorphic "Tap to discover" pill */
+.tap-hint-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 26px;
+  border-radius: 32px;
+  background: rgba(6, 14, 26, 0.52);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 219, 233, 0.2);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: tap-hint-pulse 2.2s ease-in-out infinite;
+  pointer-events: auto;
+}
+
+.tap-hint-btn__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-surface-tint);
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.tap-hint-btn__label {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  opacity: 0.92;
 }
 
 @keyframes fadeInUp {

@@ -190,6 +190,70 @@
   );
 }
 
+/* ── Street View embed ───────────────────────────────────── */
+
+.sv-embed {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 0 0 4px;
+  border: 1px solid rgba(0, 219, 233, 0.1);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  animation: content-fade 0.5s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  flex-shrink: 0;
+  /* Skeleton while panorama loads */
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sv-embed-frame {
+  width: 100%;
+  height: 100%;
+  /* Prevent user from panning/navigating */
+  pointer-events: none;
+  filter: saturate(0.85) brightness(0.92);
+}
+
+/* Explore CTA — clickable link bottom-left */
+
+.sv-cta {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(6, 14, 26, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 219, 233, 0.22);
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-surface-tint);
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sv-cta:hover {
+  background: rgba(0, 219, 233, 0.12);
+  border-color: rgba(0, 219, 233, 0.4);
+  transform: scale(1.02);
+}
+
+.sv-cta:active {
+  transform: scale(0.97);
+}
+
 /* ── Description block ───────────────────────────────────── */
 
 .result-description {
@@ -597,6 +661,10 @@
 
   .result-vibe-row {
     padding: 8px 0;
+  }
+
+  .sv-embed {
+    height: 120px;
   }
 
   .result-highlights {

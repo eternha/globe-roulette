@@ -34,6 +34,7 @@ import { PackTeaser } from "../packs/PackTeaser";
 import { PackSheet } from "../packs/PackSheet";
 import { CategoryIcon, IconRoute } from "../ui/Icons";
 import { HighlightSheet } from "./HighlightSheet";
+import { StreetViewEmbed } from "./StreetViewEmbed";
 import "./result-card.css";
 import "./highlight-sheet.css";
 
@@ -323,6 +324,15 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
             </div>
 
             <hr className="result-divider" />
+
+            {/* Street View */}
+            <StreetViewEmbed
+              lat={destination.lat}
+              lng={destination.lng}
+              name={destination.name}
+              country={destination.country}
+              highlights={destination.highlights}
+            />
 
             {/* Description */}
             <p className="result-description">{destination.shortDescription}</p>
