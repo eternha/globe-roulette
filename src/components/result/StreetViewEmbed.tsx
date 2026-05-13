@@ -49,8 +49,12 @@ export function StreetViewEmbed({
   const containerRef = useRef<HTMLDivElement>(null);
   const panoramaRef = useRef<google.maps.StreetViewPanorama | null>(null);
   const [hidden, setHidden] = useState(false);
+  const [panoId, setPanoId] = useState<string | null>(null);
 
-  const mapsUrl = `https://www.google.com/maps/@${lat},${lng},3a,90y,0h,90t/data=!3m1!1e1`;
+  /* Official Maps URL API — opens Street View on both desktop and mobile */
+  const mapsUrl = panoId
+    ? `https://www.google.com/maps/@?api=1&map_action=pano&pano=${panoId}`
+    : `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
 
   useEffect(() => {
     if (!API_KEY || !containerRef.current) return;
@@ -75,7 +79,6 @@ export function StreetViewEmbed({
 
             if (status !== google.maps.StreetViewStatus.OK) {
               if (radius < 5000) {
-                /* Widen search radius before giving up */
                 renderPanorama({ lat, lng }, 5000);
               } else {
                 setHidden(true);
@@ -83,10 +86,13 @@ export function StreetViewEmbed({
               return;
             }
 
+            const id = data!.location!.pano;
+            setPanoId(id);
+
             panoramaRef.current = new google.maps.StreetViewPanorama(
               containerRef.current!,
               {
-                pano: data!.location!.pano,
+                pano: id,
                 disableDefaultUI: true,
                 clickToGo: false,
                 scrollwheel: false,
@@ -99,7 +105,6 @@ export function StreetViewEmbed({
         );
       };
 
-      /* Try geocoding the first highlight for a scenic spot */
       const firstHighlight = highlights[0];
       if (firstHighlight) {
         const geocoder = new google.maps.Geocoder();
@@ -134,6 +139,9 @@ export function StreetViewEmbed({
   return (
     <div className="sv-embed">
       <div ref={containerRef} className="sv-embed-frame" />
+
+      {/* Bottom gradient — covers the Maps attribution bar */}
+      <div className="sv-attribution-mask" aria-hidden="true" />
 
       <a
         href={mapsUrl}
