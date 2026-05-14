@@ -78,7 +78,7 @@ export const AFFILIATE_DISCLOSURE_SECTIONS: readonly LegalSection[] = [
   },
   {
     heading: "Our partners",
-    body: "We work with established travel platforms including Kiwi.com (flights), Booking.com (hotels), GetYourGuide (experiences), Airalo (eSIM), SafetyWing (insurance), Bookaway (transfers), and DiscoverCars (car rental). This list may change over time.",
+    body: "We work with established travel platforms including Kiwi.com (flights), Booking.com (hotels), Klook (experiences), Yesim (eSIM), EKTA (insurance), Kiwitaxi (transfers), and GetRentacar (car rental). This list may change over time.",
   },
   {
     heading: "Editorial independence",

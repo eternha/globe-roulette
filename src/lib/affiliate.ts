@@ -1,20 +1,33 @@
 /**
  * Affiliate URL builders.
  *
- * Each provider gets a dedicated builder that produces a ready-to-open
- * search URL pre-filled with the destination. Affiliate / partner IDs
- * come from VITE_ environment variables.
+ * Kiwi: tracked via affilid embedded directly in the deep link URL.
+ * All others: clean search URLs for now. Tracking activates via
+ * tp.media/r redirects once the Travelpayouts programs are subscribed
+ * (Airalo p=8310, Booking p=84, Viator p=1922 — need TRS=728446 approved
+ * in the Travelpayouts dashboard for each before they can go live).
  */
 
 import type { AffiliateUrlParams } from "../types/monetization";
 import { getProvider } from "../config/monetization";
 
-/* ── Per-provider builders ───────────────────────────────── */
-// Build clean search URLs — Travelpayouts adds affiliate tracking server-side.
+/* ── Travelpayouts affiliate identifiers (extracted from tpk.mx redirects) ── */
 
-// Travelpayouts affilid for Kiwi — extracted from the tpk.mx short link
 const KIWI_AFFILID =
   "travelpayoutsdeeplink_travel-roulette-eight.vercel.app_1391979a5f3243f9bf74b20db-728446";
+
+const KLOOK_AID = "api|13694|ae2f9ff348c747fb9bb53b71c-728446|pid|728446";
+
+const KIWITAXI_TPO = "4c420dcf8872410aaa44541a8-728446";
+
+const YESIM_PARTNER_ID = "636";
+const YESIM_SUB_ID = "56482eb2e748413fa362e1aea-728446";
+
+const EKTA_SUB_ID = "432d6c4ff46344c784b65004c-728446";
+
+const GETRENTACAR_TRACK_ID = "37037d5b3299456ab8157a0ca-728446";
+
+/* ── Per-provider builders ───────────────────────────────── */
 
 function buildKiwiUrl(params: AffiliateUrlParams): string | null {
   const provider = getProvider("kiwi");
@@ -45,54 +58,61 @@ function buildBookingUrl(params: AffiliateUrlParams): string | null {
   return `${provider.baseUrl}?${query.toString()}`;
 }
 
-function buildGetYourGuideUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("getyourguide");
-  if (!provider) return null;
+function buildKlookUrl(params: AffiliateUrlParams): string | null {
+  if (!getProvider("klook")) return null;
 
-  const query = new URLSearchParams({
-    q: params.destination,
-    lc: params.country,
-  });
-
-  return `${provider.baseUrl}?${query.toString()}`;
-}
-
-function buildAiraloUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("airalo");
-  if (!provider) return null;
-
-  const slug = encodeURIComponent(
-    params.country.toLowerCase().replace(/\s+/g, "-"),
-  );
-  return `${provider.baseUrl}/${slug}`;
+  const kSite = `https://www.klook.com/activity/search?query=${encodeURIComponent(params.destination)}`;
+  const query = new URLSearchParams({ aid: KLOOK_AID, k_site: kSite });
+  return `https://affiliate.klook.com/redirect?${query.toString()}`;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function buildSafetyWingUrl(_params: AffiliateUrlParams): string | null {
-  const provider = getProvider("safetywing");
-  if (!provider) return null;
-  return provider.baseUrl;
-}
-
-function buildBookawayUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("bookaway");
-  if (!provider) return null;
-
-  const query = new URLSearchParams({ to: params.destination });
-  return `${provider.baseUrl}?${query.toString()}`;
-}
-
-function buildDiscoverCarsUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("discovercars");
-  if (!provider) return null;
+function buildYesimUrl(_params: AffiliateUrlParams): string | null {
+  if (!getProvider("yesim")) return null;
 
   const query = new URLSearchParams({
-    location: `${params.destination}, ${params.country}`,
+    af_sub1: YESIM_PARTNER_ID,
+    c: "Partners",
+    partner_id: YESIM_PARTNER_ID,
+    pid: `partner${YESIM_PARTNER_ID}`,
+    sub_id: YESIM_SUB_ID,
   });
-  if (params.checkIn) query.set("pick_date", params.checkIn);
-  if (params.checkOut) query.set("drop_date", params.checkOut);
+  return `https://yesim.tech?${query.toString()}`;
+}
 
-  return `${provider.baseUrl}/search?${query.toString()}`;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function buildEktaUrl(_params: AffiliateUrlParams): string | null {
+  if (!getProvider("ekta")) return null;
+
+  const query = new URLSearchParams({
+    sub_id: EKTA_SUB_ID,
+    utm_source: "travelpayouts",
+  });
+  return `https://ektatraveling.com?${query.toString()}`;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function buildKiwitaxiUrl(_params: AffiliateUrlParams): string | null {
+  if (!getProvider("kiwitaxi")) return null;
+
+  const query = new URLSearchParams({
+    tpo: KIWITAXI_TPO,
+    utm_source: "travelpayouts",
+  });
+  return `https://kiwitaxi.com?${query.toString()}`;
+}
+
+function buildGetRentacarUrl(params: AffiliateUrlParams): string | null {
+  if (!getProvider("getrentacar")) return null;
+
+  const query = new URLSearchParams({
+    track_id: GETRENTACAR_TRACK_ID,
+    utm_campaign: "partner",
+    utm_medium: "partner_cpa",
+    utm_source: "travelpayouts",
+    location: params.destination,
+  });
+  return `https://getrentacar.com?${query.toString()}`;
 }
 
 /* ── Registry ────────────────────────────────────────────── */
@@ -103,11 +123,11 @@ const builders: Record<
 > = {
   kiwi: buildKiwiUrl,
   booking: buildBookingUrl,
-  getyourguide: buildGetYourGuideUrl,
-  airalo: buildAiraloUrl,
-  safetywing: buildSafetyWingUrl,
-  bookaway: buildBookawayUrl,
-  discovercars: buildDiscoverCarsUrl,
+  klook: buildKlookUrl,
+  yesim: buildYesimUrl,
+  ekta: buildEktaUrl,
+  kiwitaxi: buildKiwitaxiUrl,
+  getrentacar: buildGetRentacarUrl,
 };
 
 /**
