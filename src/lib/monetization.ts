@@ -15,6 +15,7 @@ import {
   SECONDARY_CATEGORIES,
 } from "../config/monetization";
 import { buildAffiliateUrl } from "./affiliate";
+import { convertToAffiliateUrl } from "./affiliateProxy";
 import {
   trackProviderClicked,
   trackAffiliateLinkOpened,
@@ -83,17 +84,30 @@ export function getBookingActions(dest: Destination): readonly BookingAction[] {
 
 /**
  * Open an affiliate link in a new tab and track the click.
- * Fires two events: provider_clicked (intent) and affiliate_link_opened (action).
+ *
+ * Opens the tab synchronously (avoids popup blockers on mobile), then
+ * converts the URL through Travelpayouts before navigating. Falls back
+ * to the raw URL if the proxy is unavailable.
  */
 export function openAffiliateLink(action: BookingAction, destinationName: string): void {
   trackProviderClicked(action.providerId, action.category, destinationName);
-  trackAffiliateLinkOpened(
-    action.providerId,
-    action.category,
-    destinationName,
-    action.url,
-  );
-  window.open(action.url, "_blank", "noopener,noreferrer");
+
+  // Open blank tab immediately — must be synchronous to avoid popup blockers
+  const tab = window.open("", "_blank", "noopener,noreferrer");
+
+  void convertToAffiliateUrl(action.url).then((affiliateUrl) => {
+    trackAffiliateLinkOpened(
+      action.providerId,
+      action.category,
+      destinationName,
+      affiliateUrl,
+    );
+    if (tab) {
+      tab.location.href = affiliateUrl;
+    } else {
+      window.open(affiliateUrl, "_blank", "noopener,noreferrer");
+    }
+  });
 }
 
 /**
