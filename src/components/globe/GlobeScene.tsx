@@ -32,10 +32,17 @@ export function GlobeScene() {
     <div
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        /*
+         * Extend past the iOS home-indicator safe area so WebGL renders
+         * all the way to the physical screen edge — no native iOS gray
+         * background can bleed through.
+         */
+        bottom: "calc(-1 * env(safe-area-inset-bottom, 0px))",
         zIndex: 0,
-        background:
-          "radial-gradient(ellipse at 50% 50%, #0e1a30 0%, #080f1c 40%, #030608 100%)",
+        background: "#000",
       }}
     >
       <Canvas

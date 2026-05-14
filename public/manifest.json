@@ -4,7 +4,7 @@
   "description": "Spin the globe. Discover your next adventure. A 3D interactive globe that picks random travel destinations for you.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#131313",
+  "background_color": "#000000",
   "theme_color": "#00dbe9",
   "orientation": "portrait-primary",
   "icons": [
