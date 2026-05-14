@@ -42,6 +42,8 @@ export default defineConfig({
          * deep-links (e.g. ?dest=tokyo) still work when offline.
          */
         navigateFallback: "index.html",
+        // Never intercept API routes — let them reach the serverless function
+        navigateFallbackDenylist: [/^\/api\//],
 
         runtimeCaching: [
           {
