@@ -44,7 +44,12 @@ body::after {
   bottom: 0;
   height: env(safe-area-inset-bottom, 0px);
   background: #000;
-  z-index: 9999;
+  /*
+   * z-index 1: above the WebGL canvas (0) so no iOS gray bleeds through,
+   * but below the result card backdrop (20) and all other sheets — they
+   * cover the safe area with their own glass background.
+   */
+  z-index: 1;
   pointer-events: none;
 }
 
