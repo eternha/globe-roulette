@@ -31,6 +31,23 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+ * iOS PWA: paint the home-indicator safe area black so the system
+ * never bleeds its native gray through. Sits above everything (z-index 9999)
+ * but is pointer-events: none, so it never blocks taps.
+ */
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+  background: #000;
+  z-index: 9999;
+  pointer-events: none;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

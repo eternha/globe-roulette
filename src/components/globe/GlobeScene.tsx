@@ -32,15 +32,7 @@ export function GlobeScene() {
     <div
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        /*
-         * Extend past the iOS home-indicator safe area so WebGL renders
-         * all the way to the physical screen edge — no native iOS gray
-         * background can bleed through.
-         */
-        bottom: "calc(-1 * env(safe-area-inset-bottom, 0px))",
+        inset: 0,
         zIndex: 0,
         background: "#000",
       }}
