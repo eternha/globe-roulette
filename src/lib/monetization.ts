@@ -15,7 +15,6 @@ import {
   SECONDARY_CATEGORIES,
 } from "../config/monetization";
 import { buildAffiliateUrl } from "./affiliate";
-import { convertToAffiliateUrl } from "./affiliateProxy";
 import {
   trackProviderClicked,
   trackAffiliateLinkOpened,
@@ -83,31 +82,23 @@ export function getBookingActions(dest: Destination): readonly BookingAction[] {
 }
 
 /**
- * Open an affiliate link in a new tab and track the click.
+ * Open an affiliate link via the server-side redirect endpoint.
  *
- * Opens the tab synchronously (avoids popup blockers on mobile), then
- * converts the URL through Travelpayouts before navigating. Falls back
- * to the raw URL if the proxy is unavailable.
+ * /api/redirect converts the raw URL to a Travelpayouts affiliate URL
+ * server-side and issues a 302 — no blank-tab tricks needed, works in
+ * all browsers including mobile Safari.
  */
 export function openAffiliateLink(action: BookingAction, destinationName: string): void {
   trackProviderClicked(action.providerId, action.category, destinationName);
+  trackAffiliateLinkOpened(
+    action.providerId,
+    action.category,
+    destinationName,
+    action.url,
+  );
 
-  // Open blank tab immediately — must be synchronous to avoid popup blockers
-  const tab = window.open("", "_blank", "noopener,noreferrer");
-
-  void convertToAffiliateUrl(action.url).then((affiliateUrl) => {
-    trackAffiliateLinkOpened(
-      action.providerId,
-      action.category,
-      destinationName,
-      affiliateUrl,
-    );
-    if (tab) {
-      tab.location.href = affiliateUrl;
-    } else {
-      window.open(affiliateUrl, "_blank", "noopener,noreferrer");
-    }
-  });
+  const redirectUrl = `/api/redirect?url=${encodeURIComponent(action.url)}`;
+  window.open(redirectUrl, "_blank", "noopener,noreferrer");
 }
 
 /**
