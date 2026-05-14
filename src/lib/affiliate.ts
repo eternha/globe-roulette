@@ -12,11 +12,19 @@ import { getProvider } from "../config/monetization";
 /* ── Per-provider builders ───────────────────────────────── */
 // Build clean search URLs — Travelpayouts adds affiliate tracking server-side.
 
+// Travelpayouts affilid for Kiwi — extracted from the tpk.mx short link
+const KIWI_AFFILID =
+  "travelpayoutsdeeplink_travel-roulette-eight.vercel.app_1391979a5f3243f9bf74b20db-728446";
+
 function buildKiwiUrl(params: AffiliateUrlParams): string | null {
   const provider = getProvider("kiwi");
   if (!provider) return null;
 
-  const query = new URLSearchParams({ to: params.destination });
+  const query = new URLSearchParams({
+    affilid: KIWI_AFFILID,
+    to: params.destination,
+    lang: "en",
+  });
   if (params.checkIn) query.set("departure", params.checkIn);
   if (params.checkOut) query.set("return", params.checkOut);
   if (params.passengers) query.set("adults", String(params.passengers));

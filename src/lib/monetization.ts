@@ -82,11 +82,8 @@ export function getBookingActions(dest: Destination): readonly BookingAction[] {
 }
 
 /**
- * Open an affiliate link via the server-side redirect endpoint.
- *
- * /api/redirect converts the raw URL to a Travelpayouts affiliate URL
- * server-side and issues a 302 — no blank-tab tricks needed, works in
- * all browsers including mobile Safari.
+ * Open an affiliate link in a new tab and track the click.
+ * Affiliate IDs are embedded directly in the URLs by each builder.
  */
 export function openAffiliateLink(action: BookingAction, destinationName: string): void {
   trackProviderClicked(action.providerId, action.category, destinationName);
@@ -96,9 +93,7 @@ export function openAffiliateLink(action: BookingAction, destinationName: string
     destinationName,
     action.url,
   );
-
-  const redirectUrl = `/api/redirect?url=${encodeURIComponent(action.url)}`;
-  window.open(redirectUrl, "_blank", "noopener,noreferrer");
+  window.open(action.url, "_blank", "noopener,noreferrer");
 }
 
 /**
