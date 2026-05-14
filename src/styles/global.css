@@ -9,10 +9,19 @@
   box-sizing: border-box;
 }
 
-html,
+html {
+  height: 100%;
+  /* iOS Safari: fill the full physical screen including bottom safe area */
+  min-height: -webkit-fill-available;
+  /* #030608 matches the darkest edge of the globe gradient — no gray bleed */
+  background: #030608;
+}
+
 body,
 #root {
   height: 100%;
+  /* dvh adjusts dynamically as Safari toolbar shows/hides */
+  min-height: 100dvh;
   overflow: hidden;
   background: var(--color-background);
   color: var(--color-on-background);
