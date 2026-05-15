@@ -14,6 +14,7 @@ const KIWI_AFFILID =
   "travelpayoutsdeeplink_travel-roulette-eight.vercel.app_1391979a5f3243f9bf74b20db-728446";
 
 const KLOOK_URL = "https://klook.tpk.mx/lan2WXzr";
+const TIQETS_URL = "https://tiqets.tpk.mx/2Ft7AD7S";
 const KIWITAXI_URL = "https://kiwitaxi.tpk.mx/Igpo1vSz";
 const YESIM_URL = "https://yesim.tpk.mx/vAxUKvKx";
 const EKTA_URL = "https://ektatraveling.tpk.mx/fu5mmnGK";
@@ -37,22 +38,15 @@ function buildKiwiUrl(params: AffiliateUrlParams): string | null {
   return `${provider.baseUrl}?${query.toString()}`;
 }
 
-function buildBookingUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("booking");
-  if (!provider) return null;
-
-  const query = new URLSearchParams({
-    ss: `${params.destination}, ${params.country}`,
-  });
-  if (params.checkIn) query.set("checkin", params.checkIn);
-  if (params.checkOut) query.set("checkout", params.checkOut);
-
-  return `${provider.baseUrl}?${query.toString()}`;
-}
 
 function buildKlookUrl(_params: AffiliateUrlParams): string | null {
   if (!getProvider("klook")) return null;
   return KLOOK_URL;
+}
+
+function buildTiqetsUrl(_params: AffiliateUrlParams): string | null {
+  if (!getProvider("tiqets")) return null;
+  return TIQETS_URL;
 }
 
 function buildYesimUrl(_params: AffiliateUrlParams): string | null {
@@ -82,8 +76,8 @@ const builders: Record<
   (params: AffiliateUrlParams) => string | null
 > = {
   kiwi: buildKiwiUrl,
-  booking: buildBookingUrl,
   klook: buildKlookUrl,
+  tiqets: buildTiqetsUrl,
   yesim: buildYesimUrl,
   ekta: buildEktaUrl,
   kiwitaxi: buildKiwitaxiUrl,
