@@ -188,7 +188,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
       `${destination.name}, ${destination.country}`,
       destination.shortDescription,
       "",
-      `Travel Roulette chose our next trip ✈`,
+      `Globe Roulette chose our next trip ✈`,
     ].join("\n");
 
     /* Clipboard fallback DOES include the URL as a single string. */
@@ -197,7 +197,7 @@ export function ResultCard({ destination, onTryAgain, onDismiss }: ResultCardPro
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({
-          title: `${destination.name} — Travel Roulette`,
+          title: `${destination.name} — Globe Roulette`,
           text: shareBody,
           url: shareUrl,
         });

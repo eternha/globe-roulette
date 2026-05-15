@@ -26,7 +26,7 @@ export const SPONSORED_INSPIRATION_LABEL = "Sponsored Inspiration";
 
 /** Default disclosure for standard sponsored placements. */
 export const SPONSORED_DISCLOSURE =
-  "This content is sponsored. Travel Roulette may receive compensation from featured partners. Roulette results are never secretly influenced by sponsorship deals.";
+  "This content is sponsored. Globe Roulette may receive compensation from featured partners. Roulette results are never secretly influenced by sponsorship deals.";
 
 /* ── Mock placements (all disabled by default) ─────────────── */
 

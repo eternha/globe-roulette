@@ -121,7 +121,7 @@ export default function App() {
               opacity: 0.7,
             }}
           >
-            Travel Roulette
+            Globe Roulette
           </h1>
 
           {/* Saved destinations button */}

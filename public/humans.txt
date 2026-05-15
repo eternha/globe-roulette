@@ -1,5 +1,5 @@
 /* TEAM */
-Product: Travel Roulette
+Product: Globe Roulette
 Site: https://globeroulette.com
 From: World
 

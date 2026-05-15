@@ -112,4 +112,4 @@ export function shouldShowBookingSection(): boolean {
 
 /** Static affiliate disclosure text. */
 export const AFFILIATE_DISCLOSURE =
-  "Some links may earn us a small commission at no extra cost to you. This helps keep Travel Roulette free.";
+  "Some links may earn us a small commission at no extra cost to you. This helps keep Globe Roulette free.";

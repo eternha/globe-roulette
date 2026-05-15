@@ -63,7 +63,7 @@ export function ProModal({ source, onClose }: ProModalProps) {
         className={`pro-sheet${swipe.isDismissing ? " pro-sheet--dismissing" : ""}`}
         role="dialog"
         aria-modal="true"
-        aria-label="Travel Roulette Pro"
+        aria-label="Globe Roulette Pro"
         style={{
           transform: swipe.dragY > 0 ? `translateY(${swipe.dragY}px)` : undefined,
           transition: swipe.isDragging ? "none" : undefined,
@@ -80,7 +80,7 @@ export function ProModal({ source, onClose }: ProModalProps) {
               <IconSparkle size={12} className="pro-badge-icon" />
               Pro
             </div>
-            <h2 className="pro-title">Travel Roulette Pro</h2>
+            <h2 className="pro-title">Globe Roulette Pro</h2>
             <p className="pro-subtitle">
               Unlock smart filters, group voting, AI itineraries,
               and premium destinations.

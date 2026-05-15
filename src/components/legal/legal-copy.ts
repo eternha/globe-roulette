@@ -18,7 +18,7 @@ export const PRIVACY_LAST_UPDATED = "May 2026";
 export const PRIVACY_SECTIONS: readonly LegalSection[] = [
   {
     heading: "What we collect",
-    body: "Travel Roulette runs entirely in your browser. We do not collect personal information, require accounts, or store data on our servers. Saved destinations are kept in your browser's local storage and never transmitted.",
+    body: "Globe Roulette runs entirely in your browser. We do not collect personal information, require accounts, or store data on our servers. Saved destinations are kept in your browser's local storage and never transmitted.",
   },
   {
     heading: "Analytics",
@@ -46,7 +46,7 @@ export const TERMS_LAST_UPDATED = "May 2026";
 export const TERMS_SECTIONS: readonly LegalSection[] = [
   {
     heading: "The service",
-    body: "Travel Roulette is a free tool that suggests travel destinations at random. It is provided for entertainment and inspiration only. We do not guarantee the accuracy, completeness, or timeliness of destination information.",
+    body: "Globe Roulette is a free tool that suggests travel destinations at random. It is provided for entertainment and inspiration only. We do not guarantee the accuracy, completeness, or timeliness of destination information.",
   },
   {
     heading: "Affiliate links",
@@ -58,7 +58,7 @@ export const TERMS_SECTIONS: readonly LegalSection[] = [
   },
   {
     heading: "Intellectual property",
-    body: "The Travel Roulette name, design, and code are our property. Destination data is curated for this project. You may share results freely but may not reproduce the app itself.",
+    body: "The Globe Roulette name, design, and code are our property. Destination data is curated for this project. You may share results freely but may not reproduce the app itself.",
   },
   {
     heading: "Changes",
@@ -74,7 +74,7 @@ export const AFFILIATE_DISCLOSURE_LAST_UPDATED = "May 2026";
 export const AFFILIATE_DISCLOSURE_SECTIONS: readonly LegalSection[] = [
   {
     heading: "How we earn revenue",
-    body: "Travel Roulette participates in affiliate programs with travel booking platforms. When you click a booking link and complete a purchase, we may earn a small commission at no extra cost to you.",
+    body: "Globe Roulette participates in affiliate programs with travel booking platforms. When you click a booking link and complete a purchase, we may earn a small commission at no extra cost to you.",
   },
   {
     heading: "Our partners",
@@ -86,6 +86,6 @@ export const AFFILIATE_DISCLOSURE_SECTIONS: readonly LegalSection[] = [
   },
   {
     heading: "Why this matters",
-    body: "Affiliate revenue helps keep Travel Roulette free. We believe in transparency about how the project sustains itself.",
+    body: "Affiliate revenue helps keep Globe Roulette free. We believe in transparency about how the project sustains itself.",
   },
 ];

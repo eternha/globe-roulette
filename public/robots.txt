@@ -1,4 +1,4 @@
-# Travel Roulette — robots.txt
+# Globe Roulette — robots.txt
 User-agent: *
 Allow: /
 Disallow: /textures/

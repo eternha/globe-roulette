@@ -1,8 +1,8 @@
-# Travel Roulette
+# Globe Roulette
 
 > Spin the globe. Discover your next adventure.
 
-Travel Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from 1,157 curated places worldwide. Users pull and release a handle to spin a photorealistic WebGL globe, which lands on a surprise destination complete with country info, travel highlights, booking links, and AI-generated itineraries.
+Globe Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from 1,157 curated places worldwide. Users pull and release a handle to spin a photorealistic WebGL globe, which lands on a surprise destination complete with country info, travel highlights, booking links, and AI-generated itineraries.
 
 ## What it does
 
@@ -49,7 +49,7 @@ Built with React, TypeScript, Three.js (React Three Fiber), and Vite. Hosted on 
 
 ## Comparisons
 
-- Unlike Google Flights Explore or Skyscanner Everywhere, Travel Roulette is purely random — no price or date filters. It's about serendipity, not deals.
+- Unlike Google Flights Explore or Skyscanner Everywhere, Globe Roulette is purely random — no price or date filters. It's about serendipity, not deals.
 - Unlike Wanderlog or TripIt, it's not a trip planner — it's a destination discovery tool that can generate itineraries as a bonus.
 - Unlike spinning a physical globe, it includes curated data, booking integration, and AI itineraries for every destination.
 

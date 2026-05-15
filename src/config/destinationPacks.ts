@@ -6,7 +6,7 @@
  * the default roulette behavior is NEVER changed.
  *
  * Pack types:
- *  - editorial: curated by the Travel Roulette team
+ *  - editorial: curated by the Globe Roulette team
  *  - creator: curated by travel influencers or partners
  *  - premium: available only to Pro subscribers
  *  - sponsored: funded by a destination partner (clearly labeled)
@@ -111,7 +111,7 @@ export const DESTINATION_PACKS: readonly DestinationPack[] = [
     name: "Girls Trip Roulette",
     description: "Fun, safe and vibrant destinations for group trips",
     type: "creator",
-    creatorName: "Travel Roulette Team",
+    creatorName: "Globe Roulette Team",
     isPremium: false,
     destinationIds: [],
     tags: ["girls", "group", "fun", "nightlife"],

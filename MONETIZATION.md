@@ -1,6 +1,6 @@
 # Monetization Architecture
 
-Travel Roulette's monetization is built in progressive phases, each
+Globe Roulette's monetization is built in progressive phases, each
 gated by feature flags and designed to layer on top of the core
 experience without disrupting it.
 
@@ -55,7 +55,7 @@ public partner ID stored in a `VITE_` env var.
 
 ---
 
-## Phase 2: Travel Roulette Pro
+## Phase 2: Globe Roulette Pro
 
 **Status:** Frontend-ready (coming soon mode)
 

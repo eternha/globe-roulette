@@ -116,7 +116,7 @@ export function getGroupRoomPricingLabel(): string {
 /* ── Copy ───────────────────────────────────────────────────── */
 
 export const GROUP_ROOM_DESCRIPTION =
-  "Create a shared Trip Room, invite friends, collect preferences and let Travel Roulette choose the best destination for everyone.";
+  "Create a shared Trip Room, invite friends, collect preferences and let Globe Roulette choose the best destination for everyone.";
 
 export const GROUP_ROOM_FEATURES: readonly { emoji: string; label: string; description: string }[] = [
   {
