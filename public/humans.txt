@@ -1,6 +1,6 @@
 /* TEAM */
 Product: Travel Roulette
-Site: https://travel-roulette-eight.vercel.app
+Site: https://globeroulette.com
 From: World
 
 /* TECHNOLOGY */

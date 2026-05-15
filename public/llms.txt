@@ -37,7 +37,7 @@ Travel Roulette is a free, interactive 3D globe web app that randomly selects tr
 
 ## How to use it
 
-1. Visit travel-roulette-eight.vercel.app
+1. Visit globeroulette.com
 2. Pull the arrow handle upward and release it
 3. Watch the 3D globe spin and land on a random destination
 4. Explore the destination card with highlights, booking links, and itinerary options
@@ -55,8 +55,8 @@ Built with React, TypeScript, Three.js (React Three Fiber), and Vite. Hosted on 
 
 ## URL
 
-https://travel-roulette-eight.vercel.app
+https://globeroulette.com
 
 ## Contact
 
-Via the website at https://travel-roulette-eight.vercel.app
+Via the website at https://globeroulette.com
