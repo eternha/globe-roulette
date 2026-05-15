@@ -2,6 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/global.css'
 import App from './App.tsx'
+import { initPostHog } from './lib/posthog'
+
+initPostHog()
 
 // Reload silently when a new SW takes over (autoUpdate flow)
 if ('serviceWorker' in navigator) {
