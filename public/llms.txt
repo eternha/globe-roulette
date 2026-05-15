@@ -2,7 +2,7 @@
 
 > Spin the globe. Discover your next adventure.
 
-Travel Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from over 1,100 curated places worldwide. Users pull and release a handle to spin a photorealistic WebGL globe, which lands on a surprise destination complete with country info, travel highlights, booking links, and AI-generated itineraries.
+Travel Roulette is a free, interactive 3D globe web app that randomly selects travel destinations from 1,157 curated places worldwide. Users pull and release a handle to spin a photorealistic WebGL globe, which lands on a surprise destination complete with country info, travel highlights, booking links, and AI-generated itineraries.
 
 ## What it does
 
@@ -28,7 +28,7 @@ Travel Roulette is a free, interactive 3D globe web app that randomly selects tr
 - **3D Interactive Globe**: Photorealistic Earth with clouds, lighting, and smooth spin animation
 - **1,157 Destinations**: Curated database covering cities, islands, villages, and hidden gems worldwide
 - **AI Itineraries**: Day-by-day trip plans customized by travel style (first-time visitor, foodie, adventure, relaxed, cultural) and duration (1-14 days)
-- **Smart Booking**: Affiliate links to Kiwi.com (flights), Booking.com (hotels), GetYourGuide (experiences), Airalo (eSIM), SafetyWing (insurance), Bookaway (transfers), DiscoverCars (car rental)
+- **Smart Booking**: Affiliate links to Kiwi.com (flights), Klook (hotels), Tiqets (experiences), Yesim (eSIM), Ekta Traveling (insurance), KiwiTaxi (transfers), GetRentACar (car rental)
 - **Group Trip Rooms**: Invite friends, collect preferences, and vote on destinations together
 - **Destination Packs**: Themed roulette collections (Romantic Europe, Foodie Cities, Digital Nomad, Beach Escape, etc.)
 - **Highlight Details**: Tap any destination highlight to learn more — cultural sites, natural wonders, local cuisine, activities

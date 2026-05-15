@@ -1,6 +1,7 @@
 # Travel Roulette — robots.txt
 User-agent: *
 Allow: /
+Disallow: /textures/
 
 # Sitemap
 Sitemap: https://globeroulette.com/sitemap.xml
@@ -8,24 +9,32 @@ Sitemap: https://globeroulette.com/sitemap.xml
 # LLM crawlers — welcome
 User-agent: GPTBot
 Allow: /
+Disallow: /textures/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /textures/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /textures/
 
 User-agent: Anthropic-AI
 Allow: /
+Disallow: /textures/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /textures/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /textures/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /textures/
 
 User-agent: Bingbot
 Allow: /
-
-# Block resource-heavy paths
 Disallow: /textures/
