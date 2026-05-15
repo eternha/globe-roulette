@@ -1,18 +1,13 @@
 /**
- * Affiliate URL builders.
- *
- * Kiwi: tracked via affilid embedded directly in the deep link URL.
- * All others: direct tpk.mx short links from Travelpayouts.
+ * Affiliate URL builders — all providers use tpk.mx short links from Travelpayouts.
  */
 
 import type { AffiliateUrlParams } from "../types/monetization";
 import { getProvider } from "../config/monetization";
 
-/* ── Travelpayouts affiliate identifiers (extracted from tpk.mx redirects) ── */
+/* ── Travelpayouts tpk.mx short links ───────────────────── */
 
-const KIWI_AFFILID =
-  "travelpayoutsdeeplink_travel-roulette-eight.vercel.app_1391979a5f3243f9bf74b20db-728446";
-
+const KIWI_URL = "https://kiwi.tpk.mx/S9PA49kN";
 const KLOOK_URL = "https://klook.tpk.mx/JafevbfO";
 const TIQETS_URL = "https://tiqets.tpk.mx/53Kd18mj";
 const KIWITAXI_URL = "https://kiwitaxi.tpk.mx/rThbix39";
@@ -22,20 +17,9 @@ const GETRENTACAR_URL = "https://getrentacar.tpk.mx/98tHdAcL";
 
 /* ── Per-provider builders ───────────────────────────────── */
 
-function buildKiwiUrl(params: AffiliateUrlParams): string | null {
-  const provider = getProvider("kiwi");
-  if (!provider) return null;
-
-  const query = new URLSearchParams({
-    affilid: KIWI_AFFILID,
-    to: params.destination,
-    lang: "en",
-  });
-  if (params.checkIn) query.set("departure", params.checkIn);
-  if (params.checkOut) query.set("return", params.checkOut);
-  if (params.passengers) query.set("adults", String(params.passengers));
-
-  return `${provider.baseUrl}?${query.toString()}`;
+function buildKiwiUrl(_params: AffiliateUrlParams): string | null {
+  if (!getProvider("kiwi")) return null;
+  return KIWI_URL;
 }
 
 
