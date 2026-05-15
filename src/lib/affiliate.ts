@@ -13,12 +13,12 @@ import { getProvider } from "../config/monetization";
 const KIWI_AFFILID =
   "travelpayoutsdeeplink_travel-roulette-eight.vercel.app_1391979a5f3243f9bf74b20db-728446";
 
-const KLOOK_URL = "https://klook.tpk.mx/lan2WXzr";
-const TIQETS_URL = "https://tiqets.tpk.mx/2Ft7AD7S";
-const KIWITAXI_URL = "https://kiwitaxi.tpk.mx/Igpo1vSz";
-const YESIM_URL = "https://yesim.tpk.mx/vAxUKvKx";
-const EKTA_URL = "https://ektatraveling.tpk.mx/fu5mmnGK";
-const GETRENTACAR_URL = "https://getrentacar.tpk.mx/q1hwA2DF";
+const KLOOK_URL = "https://klook.tpk.mx/JafevbfO";
+const TIQETS_URL = "https://tiqets.tpk.mx/53Kd18mj";
+const KIWITAXI_URL = "https://kiwitaxi.tpk.mx/rThbix39";
+const YESIM_URL = "https://yesim.tpk.mx/v3E51qTh";
+const EKTA_URL = "https://ektatraveling.tpk.mx/nN39NSQV";
+const GETRENTACAR_URL = "https://getrentacar.tpk.mx/98tHdAcL";
 
 /* ── Per-provider builders ───────────────────────────────── */
 
