@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import type { Destination } from "./data/types";
 import { destinations } from "./data/destinations";
 import { GlobeScene } from "./components/globe/GlobeScene";
 import { PullArrow } from "./components/arrow/PullArrow";
-import { ResultCard } from "./components/result/ResultCard";
-import { SavedPanel } from "./components/saved/SavedPanel";
-import { SiteFooter } from "./components/legal/SiteFooter";
 import { useRouletteMachine } from "./hooks/useRouletteMachine";
 import { usePullGesture } from "./hooks/usePullGesture";
+
+const ResultCard = lazy(() => import("./components/result/ResultCard").then((m) => ({ default: m.ResultCard })));
+const SavedPanel = lazy(() => import("./components/saved/SavedPanel").then((m) => ({ default: m.SavedPanel })));
+const SiteFooter = lazy(() => import("./components/legal/SiteFooter").then((m) => ({ default: m.SiteFooter })));
 
 export default function App() {
   const { state, send } = useRouletteMachine();
@@ -234,24 +235,26 @@ export default function App() {
       </div>
 
       {/* Glassmorphic bottom sheet */}
-      {showResult && state.selectedDestination && (
-        <ResultCard
-          destination={state.selectedDestination}
-          onTryAgain={handleTryAgain}
-          onDismiss={handleDismissResult}
-        />
-      )}
+      <Suspense fallback={null}>
+        {showResult && state.selectedDestination && (
+          <ResultCard
+            destination={state.selectedDestination}
+            onTryAgain={handleTryAgain}
+            onDismiss={handleDismissResult}
+          />
+        )}
 
-      {/* Saved destinations panel */}
-      {savedOpen && (
-        <SavedPanel
-          onClose={() => setSavedOpen(false)}
-          onSelectDestination={handleGoToDestination}
-        />
-      )}
+        {/* Saved destinations panel */}
+        {savedOpen && (
+          <SavedPanel
+            onClose={() => setSavedOpen(false)}
+            onSelectDestination={handleGoToDestination}
+          />
+        )}
 
-      {/* Site footer — privacy, terms, disclosure */}
-      <SiteFooter />
+        {/* Site footer — privacy, terms, disclosure */}
+        <SiteFooter />
+      </Suspense>
     </>
   );
 }
