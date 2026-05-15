@@ -24,7 +24,7 @@ function loadMapsApi(onReady: () => void): void {
 
   loadState = "loading";
   const script = document.createElement("script");
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async`;
   script.async = true;
   script.onload = () => {
     loadState = "ready";
