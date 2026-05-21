@@ -9,8 +9,9 @@ const DEG2RAD = Math.PI / 180;
  *   latitude  → elevation from the equator (Y axis)
  *   longitude → rotation around the Y axis (X-Z plane)
  *
- * The resulting coordinate system matches a standard Three.js sphere
- * where the prime meridian (lng 0) faces the camera at (0, 0, radius).
+ * The resulting coordinate system places the prime meridian (lng 0, lat 0)
+ * on the +X axis at (radius, 0, 0). Use `lngToGlobeRotationY` to rotate
+ * a destination's surface point onto +Z (camera-facing).
  */
 export function latLngToVector3(
   lat: number,
