@@ -135,8 +135,8 @@ export function CameraRig() {
     currentZ.current = MathUtils.lerp(currentZ.current, targetZ, alpha);
     currentY.current = MathUtils.lerp(currentY.current, targetY, alpha);
 
-    camera.position.z = currentZ.current; // eslint-disable-line react-hooks/immutability
-    camera.position.y = currentY.current; // eslint-disable-line react-hooks/immutability
+    camera.position.z = currentZ.current;
+    camera.position.y = currentY.current;
   });
 
   return null;

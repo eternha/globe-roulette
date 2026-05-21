@@ -17,38 +17,38 @@ const GETRENTACAR_URL = "https://getrentacar.tpk.mx/98tHdAcL";
 
 /* ── Per-provider builders ───────────────────────────────── */
 
-function buildKiwiUrl(_params: AffiliateUrlParams): string | null {
+function buildKiwiUrl(): string | null {
   if (!getProvider("kiwi")) return null;
   return KIWI_URL;
 }
 
 
-function buildKlookUrl(_params: AffiliateUrlParams): string | null {
+function buildKlookUrl(): string | null {
   if (!getProvider("klook")) return null;
   return KLOOK_URL;
 }
 
-function buildTiqetsUrl(_params: AffiliateUrlParams): string | null {
+function buildTiqetsUrl(): string | null {
   if (!getProvider("tiqets")) return null;
   return TIQETS_URL;
 }
 
-function buildYesimUrl(_params: AffiliateUrlParams): string | null {
+function buildYesimUrl(): string | null {
   if (!getProvider("yesim")) return null;
   return YESIM_URL;
 }
 
-function buildEktaUrl(_params: AffiliateUrlParams): string | null {
+function buildEktaUrl(): string | null {
   if (!getProvider("ekta")) return null;
   return EKTA_URL;
 }
 
-function buildKiwitaxiUrl(_params: AffiliateUrlParams): string | null {
+function buildKiwitaxiUrl(): string | null {
   if (!getProvider("kiwitaxi")) return null;
   return KIWITAXI_URL;
 }
 
-function buildGetRentacarUrl(_params: AffiliateUrlParams): string | null {
+function buildGetRentacarUrl(): string | null {
   if (!getProvider("getrentacar")) return null;
   return GETRENTACAR_URL;
 }

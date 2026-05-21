@@ -70,8 +70,9 @@ describe("latLngToVector3", () => {
 });
 
 describe("lngToGlobeRotationY", () => {
-  it("returns 0 for the prime meridian", () => {
-    expectClose(lngToGlobeRotationY(0), 0);
+  it("returns -pi/2 for the prime meridian", () => {
+    // latLngToVector3(0, 0) sits on +X, so the rotation to face +Z is -pi/2.
+    expectClose(lngToGlobeRotationY(0), -Math.PI / 2);
   });
 
   it("returns negative radians for east longitude", () => {

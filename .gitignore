@@ -10,3 +10,7 @@ image.png
 celestial_voyager
 travel_roulette_*
 .vercel
+
+# Local tool artifacts
+.playwright-mcp/
+graphify-out/

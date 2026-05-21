@@ -55,15 +55,12 @@ function startFlushTimer(): void {
 
 function flushBatch(events: readonly AnalyticsEvent[]): void {
   if (import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
     console.groupCollapsed(
       `[analytics] ${events.length} event(s)`,
     );
     for (const e of events) {
-      // eslint-disable-next-line no-console
       console.log(e.type, e.properties);
     }
-    // eslint-disable-next-line no-console
     console.groupEnd();
     return;
   }
