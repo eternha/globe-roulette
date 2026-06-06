@@ -14,3 +14,5 @@ travel_roulette_*
 # Local tool artifacts
 .playwright-mcp/
 graphify-out/
+
+.ai/
